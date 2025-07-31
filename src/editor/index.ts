@@ -72,6 +72,7 @@ import { AreaMode } from './dataset/enum/Area'
 import { IBadge } from './interface/Badge'
 import { WatermarkType } from './dataset/enum/Watermark'
 import { INTERNAL_SHORTCUT_KEY } from './dataset/constant/Shortcut'
+import { version as EDITOR_VERSION } from '../../package.json'
 
 export default class Editor {
   public command: Command
@@ -169,7 +170,8 @@ export {
   LETTER_CLASS,
   INTERNAL_CONTEXT_MENU_KEY,
   INTERNAL_SHORTCUT_KEY,
-  EDITOR_CLIPBOARD
+  EDITOR_CLIPBOARD,
+  EDITOR_VERSION
 }
 
 // 对外枚举
