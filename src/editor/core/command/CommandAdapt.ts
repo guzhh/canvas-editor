@@ -2426,8 +2426,10 @@ export class CommandAdapt {
         coordinate: { leftTop, rightTop },
         lineHeight
       } = position
-      const height = this.draw.getOriginalHeight()
-      const pageGap = this.draw.getOriginalPageGap()
+      // 这个高度应该获取页面的实际高度，也就是缩放之后的高度，不能直接使用原始高度
+      const height = this.draw.getHeight()
+      // 页面间距同页面高度
+      const pageGap = this.draw.getPageGap()
       rangeRect = {
         x: leftTop[0],
         y: leftTop[1] + pageNo * (height + pageGap),
