@@ -491,7 +491,9 @@ export class SelectControl implements IControlInstance {
     if (
       this.isPopup ||
       this.control.getIsDisabledControl() ||
-      !this.control.getIsRangeWithinControl()
+      !this.control.getIsRangeWithinControl() ||
+      // 2025年8月8日17:23:12 自定义弹窗时无需创建弹出层
+      this.element.control?.isCustomPopup
     ) {
       return
     }

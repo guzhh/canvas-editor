@@ -21,6 +21,8 @@ export interface IValueSet {
 export interface IControlSelect {
   code: string | null
   valueSets: IValueSet[]
+  // 2025年8月8日17:19:46， 新增支持自定义弹窗，用于用户自己控制弹出层
+  isCustomPopup?: boolean
   isMultiSelect?: boolean
   multiSelectDelimiter?: string
   selectExclusiveOptions?: {
@@ -43,6 +45,8 @@ export interface IControlRadio {
 }
 
 export interface IControlDate {
+  // 2025年8月8日17:19:46， 新增支持自定义弹窗，用于用户自己控制弹出层
+  isCustomPopup?: boolean
   dateFormat?: string
 }
 
