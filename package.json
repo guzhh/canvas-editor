@@ -2,7 +2,7 @@
   "name": "@panku/canvas-editor",
   "author": "Hufe",
   "license": "MIT",
-  "version": "0.9.113",
+  "version": "0.9.114",
   "description": "rich text editor by canvas/svg",
   "publishConfig": {
     "registry": "http://192.168.1.163:4873/",
