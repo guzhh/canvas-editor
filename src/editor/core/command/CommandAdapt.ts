@@ -1901,7 +1901,8 @@ export class CommandAdapt {
         }
         if (
           (id && element.id !== id) ||
-          (conceptId && element.conceptId !== conceptId)
+          // 2025年8月8日11:22:42 兼容控件
+          (conceptId && element.conceptId !== conceptId && element.control?.conceptId !== conceptId)
         ) {
           continue
         }
