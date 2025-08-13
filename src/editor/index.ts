@@ -64,6 +64,8 @@ import {
   getTextFromElementList,
   type IGetElementListByHTMLOption
 } from './utils/element'
+// 2025年8月13日11:32:44，gzh 新增导出剪切板相关函数
+import { getClipboardData, getIsClipboardContainFile, setClipboardData } from './utils/clipboard'
 import { BackgroundRepeat, BackgroundSize } from './dataset/enum/Background'
 import { TextDecorationStyle } from './dataset/enum/Text'
 import { mergeOption } from './utils/option'
@@ -161,7 +163,11 @@ export {
   splitText,
   createDomFromElementList,
   getElementListByHTML,
-  getTextFromElementList
+  getTextFromElementList,
+  // 2025年8月13日11:32:44，gzh 新增导出剪切板相关函数
+  getClipboardData,
+  setClipboardData,
+  getIsClipboardContainFile
 }
 
 // 对外常量
