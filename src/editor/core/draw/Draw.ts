@@ -2419,7 +2419,8 @@ export class Draw {
       if (!isPrintMode) {
         if (rangeRecord.width && rangeRecord.height) {
           const { x, y, width, height } = rangeRecord
-          this.range.render(ctx, x, y, width, height)
+          // 2025年8月14日10:06:11，为跨行选中时，各行选区有个间隔，样式会更加好看
+          this.range.render(ctx, x, y + 1, width, height - 1)
         }
         if (
           isCrossRowCol &&
