@@ -2043,11 +2043,39 @@ export class Draw {
       for (let j = 0; j < curRow.elementList.length; j++) {
         const element = curRow.elementList[j]
         const preElement = curRow.elementList[j - 1]
+
+        // 判断当前元素是否为控件前缀或后缀
+        const isCurrentElementControlPart =
+          element.controlComponent === ControlComponent.PREFIX ||
+          element.controlComponent === ControlComponent.POSTFIX ||
+          element.controlComponent === ControlComponent.PRE_TEXT ||
+          element.controlComponent === ControlComponent.POST_TEXT
+
         // 高亮配置：元素 > 控件配置
-        const highlight =
-          element.highlight ||
+        // const highlight =
+        //   element.highlight ||
+        //   this.control.getControlHighlight(elementList, curRow.startIndex + j)
+
+        // 获取当前元素的高亮颜色（排除控件前缀后缀）
+        const currentHighlight = element.highlight || (
+          !isCurrentElementControlPart &&
           this.control.getControlHighlight(elementList, curRow.startIndex + j)
-        if (highlight) {
+        )
+        // 判断前一个元素是否为控件前缀或后缀
+        const isPreElementControlPart = preElement && (
+          preElement.controlComponent === ControlComponent.PREFIX ||
+          preElement.controlComponent === ControlComponent.POSTFIX ||
+          preElement.controlComponent === ControlComponent.PRE_TEXT ||
+          preElement.controlComponent === ControlComponent.POST_TEXT
+        )
+
+        // 获取前一个元素的高亮颜色（排除控件前缀后缀）
+        const preHighlight = (preElement && preElement.highlight) || (
+          preElement && !isPreElementControlPart &&
+          this.control.getControlHighlight(elementList, curRow.startIndex + j - 1)
+        )
+
+        if (currentHighlight) {
           // 高亮元素相连需立即绘制，并记录下一元素坐标
           if (
             preElement &&
@@ -2070,9 +2098,9 @@ export class Draw {
             y + marginHeight - highlightMarginHeight, // 先减去行margin，再加上高亮margin
             element.metrics.width + offsetX,
             curRow.height - 2 * marginHeight + 2 * highlightMarginHeight,
-            highlight
+            currentHighlight
           )
-        } else if (preElement?.highlight) {
+        } else if (preHighlight) {
           // 之前是高亮元素，当前不是需立即绘制
           this.highlight.render(ctx)
         }
@@ -2301,11 +2329,11 @@ export class Draw {
             if (
               preElement &&
               ((preElement.type === ElementType.SUBSCRIPT &&
-                element.type !== ElementType.SUBSCRIPT) ||
+                  element.type !== ElementType.SUBSCRIPT) ||
                 (preElement.type === ElementType.SUPERSCRIPT &&
                   element.type !== ElementType.SUPERSCRIPT) ||
                 this.getElementSize(preElement) !==
-                  this.getElementSize(element))
+                this.getElementSize(element))
             ) {
               this.strikeout.render(ctx)
             }
@@ -2419,8 +2447,7 @@ export class Draw {
       if (!isPrintMode) {
         if (rangeRecord.width && rangeRecord.height) {
           const { x, y, width, height } = rangeRecord
-          // 2025年8月14日10:06:11，为跨行选中时，各行选区有个间隔，样式会更加好看
-          this.range.render(ctx, x, y + 1, width, height - 1)
+          this.range.render(ctx, x, y, width, height)
         }
         if (
           isCrossRowCol &&

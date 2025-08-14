@@ -58,11 +58,6 @@ export class ControlSearch {
         !!activeBackgroundColor &&
         !!activeControlElement &&
         element.controlId === activeControlElement.controlId &&
-        // 2025年8月14日11:37:23 gzh 对控件前缀和后缀不进行高亮
-        element.controlComponent !== ControlComponent.POSTFIX &&
-        element.controlComponent !== ControlComponent.POST_TEXT &&
-        element.controlComponent !== ControlComponent.PREFIX &&
-        element.controlComponent !== ControlComponent.PRE_TEXT &&
         !this.control.getIsRangeInPostfix()
     }
     if (!isActiveControlHighlight) {
@@ -76,11 +71,6 @@ export class ControlSearch {
         !isPrintMode &&
         !!existValueBackgroundColor &&
         !!element.controlId &&
-        // 2025年8月14日11:37:23 gzh 对控件前缀和后缀不进行高亮
-        element.controlComponent !== ControlComponent.POSTFIX &&
-        element.controlComponent !== ControlComponent.POST_TEXT &&
-        element.controlComponent !== ControlComponent.PREFIX &&
-        element.controlComponent !== ControlComponent.PRE_TEXT &&
         this.control.getIsExistValueByElementListIndex(elementList, index)
     }
     if (!isExitsValueControlHighlight) {
@@ -89,11 +79,6 @@ export class ControlSearch {
         !isPrintMode &&
         !!noValueBackgroundColor &&
         !!element.controlId &&
-        // 2025年8月14日11:37:23 gzh 对控件前缀和后缀不进行高亮
-        element.controlComponent !== ControlComponent.POSTFIX &&
-        element.controlComponent !== ControlComponent.POST_TEXT &&
-        element.controlComponent !== ControlComponent.PREFIX &&
-        element.controlComponent !== ControlComponent.PRE_TEXT &&
         !this.control.getIsExistValueByElementListIndex(elementList, index)
     }
     return (
