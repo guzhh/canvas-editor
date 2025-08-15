@@ -705,7 +705,7 @@ export class RangeManager {
     ctx.save()
     ctx.globalAlpha = this.options.rangeAlpha
     ctx.fillStyle = this.options.rangeColor
-    ctx.fillRect(x, y, width, height)
+    ctx.fillRect(x, y - 1, width, height - 2)
     ctx.restore()
   }
 

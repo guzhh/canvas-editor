@@ -325,7 +325,7 @@ export class Search {
       const y = leftTop[1]
       const width = rightTop[0] - leftTop[0]
       const height = leftBottom[1] - leftTop[1]
-      ctx.fillRect(x, y, width, height)
+      ctx.fillRect(x, y + 1, width, height - 2)
     }
     ctx.restore()
   }
