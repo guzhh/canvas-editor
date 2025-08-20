@@ -86,7 +86,8 @@ export function mouseup(evt: MouseEvent, host: CanvasEvent) {
         const dragElement = cacheElementList[cacheEndIndex]
         if (
           dragElement.type === ElementType.IMAGE ||
-          dragElement.type === ElementType.LATEX
+          dragElement.type === ElementType.LATEX ||
+          dragElement.type === ElementType.DATA_IMAGE
         ) {
           moveImgPosition(dragElement, evt, host)
           if (
@@ -296,7 +297,8 @@ export function mouseup(evt: MouseEvent, host: CanvasEvent) {
       const dragElement = elementList[rangeEndIndex]
       if (
         dragElement.type === ElementType.IMAGE ||
-        dragElement.type === ElementType.LATEX
+        dragElement.type === ElementType.LATEX ||
+        dragElement.type === ElementType.DATA_IMAGE
       ) {
         moveImgPosition(dragElement, evt, host)
         imgElement = dragElement

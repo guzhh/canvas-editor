@@ -75,6 +75,7 @@ import { IBadge } from './interface/Badge'
 import { WatermarkType } from './dataset/enum/Watermark'
 import { INTERNAL_SHORTCUT_KEY } from './dataset/constant/Shortcut'
 import { version as EDITOR_VERSION } from '../../package.json'
+import { DataImageType } from './dataset/enum/DataImage'
 
 export default class Editor {
   public command: Command
@@ -216,7 +217,8 @@ export {
   AreaMode,
   ControlState,
   FlexDirection,
-  WatermarkType
+  WatermarkType,
+  DataImageType
 }
 
 // 对外类型

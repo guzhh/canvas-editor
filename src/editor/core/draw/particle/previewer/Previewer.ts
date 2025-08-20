@@ -3,13 +3,11 @@ import { EditorMode } from '../../../../dataset/enum/Editor'
 import { IEditorOption } from '../../../../interface/Editor'
 import { IElement, IElementPosition } from '../../../../interface/Element'
 import { EventBusMap } from '../../../../interface/EventBus'
-import {
-  IPreviewerCreateResult,
-  IPreviewerDrawOption
-} from '../../../../interface/Previewer'
+import { IPreviewerCreateResult, IPreviewerDrawOption } from '../../../../interface/Previewer'
 import { downloadFile } from '../../../../utils'
 import { EventBus } from '../../../event/eventbus/EventBus'
 import { Draw } from '../../Draw'
+import { ElementType } from '../../../../dataset/enum/Element'
 
 export class Previewer {
   private container: HTMLDivElement
@@ -216,32 +214,29 @@ export class Previewer {
     let dx = 0
     let dy = 0
     switch (this.curHandleIndex) {
-      case 0:
-        {
-          const offsetX = this.mousedownX - evt.x
-          const offsetY = this.mousedownY - evt.y
-          dx = Math.cbrt(offsetX ** 3 + offsetY ** 3)
-          dy = (this.curElement.height! * dx) / this.curElement.width!
-        }
+      case 0: {
+        const offsetX = this.mousedownX - evt.x
+        const offsetY = this.mousedownY - evt.y
+        dx = Math.cbrt(offsetX ** 3 + offsetY ** 3)
+        dy = (this.curElement.height! * dx) / this.curElement.width!
+      }
         break
       case 1:
         dy = this.mousedownY - evt.y
         break
-      case 2:
-        {
-          const offsetX = evt.x - this.mousedownX
-          const offsetY = this.mousedownY - evt.y
-          dx = Math.cbrt(offsetX ** 3 + offsetY ** 3)
-          dy = (this.curElement.height! * dx) / this.curElement.width!
-        }
+      case 2: {
+        const offsetX = evt.x - this.mousedownX
+        const offsetY = this.mousedownY - evt.y
+        dx = Math.cbrt(offsetX ** 3 + offsetY ** 3)
+        dy = (this.curElement.height! * dx) / this.curElement.width!
+      }
         break
-      case 4:
-        {
-          const offsetX = evt.x - this.mousedownX
-          const offsetY = evt.y - this.mousedownY
-          dx = Math.cbrt(offsetX ** 3 + offsetY ** 3)
-          dy = (this.curElement.height! * dx) / this.curElement.width!
-        }
+      case 4: {
+        const offsetX = evt.x - this.mousedownX
+        const offsetY = evt.y - this.mousedownY
+        dx = Math.cbrt(offsetX ** 3 + offsetY ** 3)
+        dy = (this.curElement.height! * dx) / this.curElement.width!
+      }
         break
       case 3:
         dx = evt.x - this.mousedownX
@@ -249,13 +244,12 @@ export class Previewer {
       case 5:
         dy = evt.y - this.mousedownY
         break
-      case 6:
-        {
-          const offsetX = this.mousedownX - evt.x
-          const offsetY = evt.y - this.mousedownY
-          dx = Math.cbrt(offsetX ** 3 + offsetY ** 3)
-          dy = (this.curElement.height! * dx) / this.curElement.width!
-        }
+      case 6: {
+        const offsetX = this.mousedownX - evt.x
+        const offsetY = evt.y - this.mousedownY
+        dx = Math.cbrt(offsetX ** 3 + offsetY ** 3)
+        dy = (this.curElement.height! * dx) / this.curElement.width!
+      }
         break
       case 7:
         dx = this.mousedownX - evt.x
@@ -483,14 +477,14 @@ export class Previewer {
         i === 0 || i === 6 || i === 7
           ? -handleSize
           : i === 1 || i === 5
-          ? width / 2
-          : width - handleSize
+            ? width / 2
+            : width - handleSize
       const top =
         i === 0 || i === 1 || i === 2
           ? -handleSize
           : i === 3 || i === 7
-          ? height / 2 - handleSize
-          : height - handleSize
+            ? height / 2 - handleSize
+            : height - handleSize
       this.resizerHandleList[i].style.transform = `scale(${scale})`
       this.resizerHandleList[i].style.left = `${left}px`
       this.resizerHandleList[i].style.top = `${top}px`
@@ -515,12 +509,21 @@ export class Previewer {
     ) {
       return
     }
-    // 获取所有图片
-    this.imageList = this.draw.getImageParticle().getOriginalMainImageList()
-    this.curShowElement = this.curElement
-    // 渲染预览框
-    this._drawPreviewer()
-    document.body.style.overflow = 'hidden'
+    // TODO：如果不是数据图片则正常预览，如果是数据图片则对外抛出事件
+    if (this.curElement.type !== ElementType.DATA_IMAGE || !this.eventBus.isSubscribe('dataImageDblclick')) {
+      // 获取所有图片
+      this.imageList = this.draw.getImageParticle().getOriginalMainImageList()
+      // 拿到要预览的图片
+      this.curShowElement = this.curElement
+      // 渲染预览框
+      this._drawPreviewer()
+      document.body.style.overflow = 'hidden'
+    } else {
+      // 数据图片被双击
+      this.eventBus.emit('dataImageDblclick', {
+        element: this.curElement
+      })
+    }
   }
 
   public drawResizer(
@@ -543,6 +546,7 @@ export class Previewer {
     this.previewerDrawOption = options
     this.curElementSrc = element[options.srcKey || 'value'] || ''
     // 更新渲染尺寸及位置
+    // TODO: 后续图像预览都要走这个地方
     this.updateResizer(element, position)
     // 监听事件
     document.addEventListener('keydown', this._keydown)

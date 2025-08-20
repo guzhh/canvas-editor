@@ -24,17 +24,9 @@ import {
   TEXTLIKE_ELEMENT_TYPE,
   TITLE_CONTEXT_ATTR
 } from '../dataset/constant/Element'
-import {
-  listStyleCSSMapping,
-  listTypeElementMapping,
-  ulStyleMapping
-} from '../dataset/constant/List'
+import { listStyleCSSMapping, listTypeElementMapping, ulStyleMapping } from '../dataset/constant/List'
 import { START_LINE_BREAK_REG } from '../dataset/constant/Regular'
-import {
-  titleNodeNameMapping,
-  titleOrderNumberMapping,
-  titleSizeMapping
-} from '../dataset/constant/Title'
+import { titleNodeNameMapping, titleOrderNumberMapping, titleSizeMapping } from '../dataset/constant/Title'
 import { BlockType } from '../dataset/enum/Block'
 import { ImageDisplay, LocationPosition } from '../dataset/enum/Common'
 import { ControlComponent, ControlType } from '../dataset/enum/Control'
@@ -51,6 +43,7 @@ import { IRowElement } from '../interface/Row'
 import { ITd } from '../interface/table/Td'
 import { ITr } from '../interface/table/Tr'
 import { mergeOption } from './option'
+import { DataImageParticle } from '../core/draw/particle/data-image/DataImageParticle'
 
 export function unzipElementList(elementList: IElement[]): IElement[] {
   const result: IElement[] = []
@@ -549,6 +542,14 @@ export function formatElementList(
       el.width = el.width || width
       el.height = el.height || height
       el.laTexSVG = svg
+      el.id = el.id || getUUID()
+    }
+    // 格式化数据图片
+    if (el.type === ElementType.DATA_IMAGE){
+      const { image, width, height } = DataImageParticle.dataToImage(el.imageData!)
+      el.width = el.width || width
+      el.height = el.height || height
+      el.dataImageUrl = image
       el.id = el.id || getUUID()
     }
     i++
@@ -1307,6 +1308,7 @@ export function createDomFromElementList(
       } else if (
         !element.type ||
         element.type === ElementType.LATEX ||
+        element.type === ElementType.DATA_IMAGE ||
         TEXTLIKE_ELEMENT_TYPE.includes(element.type)
       ) {
         let text = ''
@@ -1696,6 +1698,7 @@ export function getTextFromElementList(elementList: IElement[]) {
       } else if (
         !element.type ||
         element.type === ElementType.LATEX ||
+        element.type === ElementType.DATA_IMAGE ||
         TEXTLIKE_ELEMENT_TYPE.includes(element.type)
       ) {
         let textLike = ''

@@ -198,6 +198,11 @@ export function mousedown(evt: MouseEvent, host: CanvasEvent) {
       previewerDrawOption.mime = 'svg'
       previewerDrawOption.srcKey = 'laTexSVG'
     }
+    // 配置预览的图片格式以及图片src字段
+    if (curElement.type === ElementType.DATA_IMAGE){
+      previewerDrawOption.mime = curElement.mime
+      previewerDrawOption.srcKey = 'dataImageUrl'
+    }
     previewer.drawResizer(
       curElement,
       positionList[curIndex],

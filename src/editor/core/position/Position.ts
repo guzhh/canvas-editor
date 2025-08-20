@@ -152,7 +152,9 @@ export class Position {
         const offsetY =
           (element.imgDisplay !== ImageDisplay.INLINE &&
             element.type === ElementType.IMAGE) ||
-          element.type === ElementType.LATEX
+          element.type === ElementType.LATEX ||
+            // 数据图片元素
+            element.type === ElementType.DATA_IMAGE
             ? curRow.ascent - metrics.height
             : curRow.ascent
         // 偏移量
@@ -437,7 +439,8 @@ export class Position {
         // 图片区域均为命中
         if (
           element.type === ElementType.IMAGE ||
-          element.type === ElementType.LATEX
+          element.type === ElementType.LATEX ||
+          element.type === ElementType.DATA_IMAGE
         ) {
           return {
             index: curPositionIndex,

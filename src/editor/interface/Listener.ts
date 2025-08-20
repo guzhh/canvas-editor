@@ -76,3 +76,6 @@ export type IImageMousedown = (payload: {
   evt: MouseEvent
   element: IElement
 }) => void
+
+// 数据图片双击
+export type IDataImageDblclick = (payload: { element: IElement }) => void

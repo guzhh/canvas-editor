@@ -79,7 +79,9 @@ export const EDITOR_ELEMENT_ZIP_ATTR: Array<keyof IElement> = [
   'extension',
   'externalId',
   'areaId',
-  'area'
+  'area',
+  'imageData',
+  'dataImageUrl'
 ]
 
 export const TABLE_TD_ZIP_ATTR: Array<keyof ITd> = [
@@ -147,7 +149,8 @@ export const TEXTLIKE_ELEMENT_TYPE: ElementType[] = [
 
 export const IMAGE_ELEMENT_TYPE: ElementType[] = [
   ElementType.IMAGE,
-  ElementType.LATEX
+  ElementType.LATEX,
+  ElementType.DATA_IMAGE
 ]
 
 export const BLOCK_ELEMENT_TYPE: ElementType[] = [

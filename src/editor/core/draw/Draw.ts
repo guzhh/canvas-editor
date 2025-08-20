@@ -113,6 +113,7 @@ import { Actuator } from '../actuator/Actuator'
 import { TableOperate } from './particle/table/TableOperate'
 import { Area } from './interactive/Area'
 import { Badge } from './frame/Badge'
+import { DataImageParticle } from './particle/data-image/DataImageParticle'
 
 export class Draw {
   private container: HTMLDivElement
@@ -149,6 +150,8 @@ export class Draw {
   private previewer: Previewer
   private imageParticle: ImageParticle
   private laTexParticle: LaTexParticle
+  // 新增数据图片元素，用于展示如二维码、条形码、牙位图等等
+  private dataImageParticle: DataImageParticle
   private textParticle: TextParticle
   private tableParticle: TableParticle
   private tableTool: TableTool
@@ -230,6 +233,8 @@ export class Draw {
     this.previewer = new Previewer(this)
     this.imageParticle = new ImageParticle(this)
     this.laTexParticle = new LaTexParticle(this)
+    // 新增数据图片元素，用于展示如二维码、条形码、牙位图等等
+    this.dataImageParticle = new DataImageParticle(this)
     this.textParticle = new TextParticle(this)
     this.tableParticle = new TableParticle(this)
     this.tableTool = new TableTool(this)
@@ -1396,7 +1401,8 @@ export class Draw {
           this.options.defaultSize * scale
       } else if (
         element.type === ElementType.IMAGE ||
-        element.type === ElementType.LATEX
+        element.type === ElementType.LATEX ||
+        element.type === ElementType.DATA_IMAGE
       ) {
         // 浮动图片无需计算数据
         if (
@@ -1744,7 +1750,8 @@ export class Draw {
       const ascent =
         (element.imgDisplay !== ImageDisplay.INLINE &&
           element.type === ElementType.IMAGE) ||
-        element.type === ElementType.LATEX
+        element.type === ElementType.LATEX ||
+          element.type === ElementType.DATA_IMAGE
           ? metrics.height + rowMargin
           : metrics.boundingBoxAscent + rowMargin
       const height =
@@ -2172,6 +2179,9 @@ export class Draw {
         } else if (element.type === ElementType.LATEX) {
           this.textParticle.complete()
           this.laTexParticle.render(ctx, element, x, y + offsetY)
+        } else if (element.type === ElementType.DATA_IMAGE) {
+          this.textParticle.complete()
+          this.dataImageParticle.render(ctx, element, x, y + offsetY)
         } else if (element.type === ElementType.TABLE) {
           if (isCrossRowCol) {
             rangeRecord.x = x

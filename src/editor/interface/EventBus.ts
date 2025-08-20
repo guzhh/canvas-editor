@@ -1,7 +1,7 @@
 import {
   IContentChange,
   IControlChange,
-  IControlContentChange,
+  IControlContentChange, IDataImageDblclick,
   IImageMousedown,
   IImageSizeChange,
   IInputEventChange,
@@ -39,4 +39,5 @@ export interface EventBusMap {
   positionContextChange: IPositionContextChange
   imageSizeChange: IImageSizeChange
   imageMousedown: IImageMousedown
+  dataImageDblclick: IDataImageDblclick
 }

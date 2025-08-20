@@ -12,9 +12,10 @@ export enum ElementType {
   CHECKBOX = 'checkbox',
   RADIO = 'radio',
   LATEX = 'latex',
+  DATA_IMAGE = 'dataImage',
   TAB = 'tab',
   DATE = 'date',
   BLOCK = 'block',
   TITLE = 'title',
-  LIST = 'list'
+  LIST = 'list',
 }

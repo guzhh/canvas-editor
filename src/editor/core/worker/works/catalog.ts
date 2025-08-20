@@ -1,5 +1,7 @@
 import { ICatalog, ICatalogItem } from '../../../interface/Catalog'
 import { IElement, IElementPosition } from '../../../interface/Element'
+// 注释掉本地的元素类型，使用全局的
+import { ElementType } from '../../../dataset/enum/Element'
 
 interface IGetCatalogPayload {
   elementList: IElement[]
@@ -10,26 +12,26 @@ type ICatalogElement = IElement & {
   pageNo: number
 }
 
-enum ElementType {
-  TEXT = 'text',
-  IMAGE = 'image',
-  TABLE = 'table',
-  HYPERLINK = 'hyperlink',
-  SUPERSCRIPT = 'superscript',
-  SUBSCRIPT = 'subscript',
-  SEPARATOR = 'separator',
-  PAGE_BREAK = 'pageBreak',
-  CONTROL = 'control',
-  CHECKBOX = 'checkbox',
-  RADIO = 'radio',
-  LATEX = 'latex',
-  TAB = 'tab',
-  DATE = 'date',
-  BLOCK = 'block',
-  TITLE = 'title',
-  AREA = 'area',
-  LIST = 'list'
-}
+// enum ElementType {
+//   TEXT = 'text',
+//   IMAGE = 'image',
+//   TABLE = 'table',
+//   HYPERLINK = 'hyperlink',
+//   SUPERSCRIPT = 'superscript',
+//   SUBSCRIPT = 'subscript',
+//   SEPARATOR = 'separator',
+//   PAGE_BREAK = 'pageBreak',
+//   CONTROL = 'control',
+//   CHECKBOX = 'checkbox',
+//   RADIO = 'radio',
+//   LATEX = 'latex',
+//   TAB = 'tab',
+//   DATE = 'date',
+//   BLOCK = 'block',
+//   TITLE = 'title',
+//   AREA = 'area',
+//   LIST = 'list'
+// }
 
 enum TitleLevel {
   FIRST = 'first',

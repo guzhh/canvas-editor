@@ -14,6 +14,7 @@ import { ITextDecoration } from './Text'
 import { ITitle } from './Title'
 import { IColgroup } from './table/Colgroup'
 import { ITr } from './table/Tr'
+import { IDataImage } from './DataImage'
 
 export interface IElementBasic {
   id?: string
@@ -115,6 +116,12 @@ export interface ILaTexElement {
   laTexSVG?: string
 }
 
+export interface IDataImageElement {
+  imageData?: IDataImage,
+  dataImageUrl?: string,
+  mime?: 'png' | 'jpg' | 'jpeg' | 'svg'
+}
+
 export interface IDateElement {
   dateFormat?: string
   dateId?: string
@@ -157,6 +164,7 @@ export type IElement = IElementBasic &
   ICheckboxElement &
   IRadioElement &
   ILaTexElement &
+  IDataImageElement &
   IDateElement &
   IImageElement &
   IBlockElement &
