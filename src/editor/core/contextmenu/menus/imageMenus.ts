@@ -70,7 +70,7 @@ export const imageMenus: IRegisterContextMenu[] = [
       return (
         !payload.isReadonly &&
         !payload.editorHasSelection &&
-        payload.startElement?.type === ElementType.IMAGE
+        (payload.startElement?.type === ElementType.IMAGE || payload.startElement?.type === ElementType.DATA_IMAGE)
       )
     },
     childMenus: [

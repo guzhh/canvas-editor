@@ -220,7 +220,12 @@ export function mousedown(evt: MouseEvent, host: CanvasEvent) {
       curElement.imgDisplay === ImageDisplay.FLOAT_TOP ||
       curElement.imgDisplay === ImageDisplay.FLOAT_BOTTOM
     ) {
-      draw.getImageParticle().createFloatImage(curElement)
+      // 创建浮动图片
+      if (curElement.type === ElementType.IMAGE){
+        draw.getImageParticle().createFloatImage(curElement)
+      }else if (curElement.type === ElementType.DATA_IMAGE){
+        draw.getDataImageParticle().createFloatImage(curElement)
+      }
     }
     // 图片点击事件
     const eventBus = draw.getEventBus()

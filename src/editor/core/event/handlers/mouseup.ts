@@ -43,7 +43,11 @@ function moveImgPosition(
       pageNo: draw.getPageNo()
     }
   }
-  draw.getImageParticle().destroyFloatImage()
+  if (element.type === ElementType.IMAGE){
+    draw.getImageParticle().destroyFloatImage()
+  }else if (element.type === ElementType.DATA_IMAGE){
+    draw.getDataImageParticle().destroyFloatImage()
+  }
 }
 
 export function mouseup(evt: MouseEvent, host: CanvasEvent) {

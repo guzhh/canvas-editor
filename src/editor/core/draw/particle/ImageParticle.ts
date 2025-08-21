@@ -7,12 +7,12 @@ import { convertStringToBase64 } from '../../../utils'
 import { Draw } from '../Draw'
 
 export class ImageParticle {
-  private draw: Draw
+  protected draw: Draw
   protected options: Required<IEditorOption>
   protected imageCache: Map<string, HTMLImageElement>
   private container: HTMLDivElement
   private floatImageContainer: HTMLDivElement | null
-  private floatImage: HTMLImageElement | null
+  protected floatImage: HTMLImageElement | null
 
   constructor(draw: Draw) {
     this.draw = draw

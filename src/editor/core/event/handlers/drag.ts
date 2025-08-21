@@ -45,7 +45,7 @@ function dragover(evt: DragEvent | MouseEvent, host: CanvasEvent) {
   if (dragFloatImageDisabled) {
     const dragElement = host.cacheElementList?.[host.cacheRange!.startIndex]
     if (
-      dragElement?.type === ElementType.IMAGE &&
+      (dragElement?.type === ElementType.IMAGE || dragElement?.type === ElementType.DATA_IMAGE) &&
       (dragElement.imgDisplay === ImageDisplay.FLOAT_TOP ||
         dragElement.imgDisplay === ImageDisplay.FLOAT_BOTTOM ||
         dragElement.imgDisplay === ImageDisplay.SURROUND)

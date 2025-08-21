@@ -13,19 +13,14 @@ import {
   IGetValueOption,
   IPainterOption
 } from '../../interface/Draw'
-import {
-  IEditorData,
-  IEditorOption,
-  IEditorResult,
-  ISetValueOption
-} from '../../interface/Editor'
+import { IEditorData, IEditorOption, IEditorResult, ISetValueOption } from '../../interface/Editor'
 import {
   IElement,
-  IElementMetrics,
   IElementFillRect,
+  IElementMetrics,
   IElementStyle,
-  ISpliceElementListOption,
-  IInsertElementListOption
+  IInsertElementListOption,
+  ISpliceElementListOption
 } from '../../interface/Element'
 import { IRow, IRowElement } from '../../interface/Row'
 import { deepClone, getUUID, nextTick } from '../../utils'
@@ -58,17 +53,11 @@ import { SubscriptParticle } from './particle/SubscriptParticle'
 import { SeparatorParticle } from './particle/SeparatorParticle'
 import { PageBreakParticle } from './particle/PageBreakParticle'
 import { Watermark } from './frame/Watermark'
-import {
-  EditorComponent,
-  EditorMode,
-  EditorZone,
-  PageMode,
-  PaperDirection,
-  WordBreak
-} from '../../dataset/enum/Editor'
+import { EditorComponent, EditorMode, EditorZone, PageMode, PaperDirection, WordBreak } from '../../dataset/enum/Editor'
 import { Control } from './control/Control'
 import {
   deleteSurroundElementList,
+  formatElementList,
   getIsBlockElement,
   getSlimCloneElementList,
   pickSurroundElementList,
@@ -77,11 +66,7 @@ import {
 import { CheckboxParticle } from './particle/CheckboxParticle'
 import { RadioParticle } from './particle/RadioParticle'
 import { DeepRequired, IPadding } from '../../interface/Common'
-import {
-  ControlComponent,
-  ControlIndentation
-} from '../../dataset/enum/Control'
-import { formatElementList } from '../../utils/element'
+import { ControlComponent, ControlIndentation } from '../../dataset/enum/Control'
 import { WorkerManager } from '../worker/WorkerManager'
 import { Previewer } from './particle/previewer/Previewer'
 import { DateParticle } from './particle/date/DateParticle'
@@ -92,10 +77,7 @@ import { I18n } from '../i18n/I18n'
 import { ImageObserver } from '../observer/ImageObserver'
 import { Zone } from '../zone/Zone'
 import { Footer } from './frame/Footer'
-import {
-  IMAGE_ELEMENT_TYPE,
-  TEXTLIKE_ELEMENT_TYPE
-} from '../../dataset/constant/Element'
+import { IMAGE_ELEMENT_TYPE, TEXTLIKE_ELEMENT_TYPE } from '../../dataset/constant/Element'
 import { ListParticle } from './particle/ListParticle'
 import { Placeholder } from './frame/Placeholder'
 import { EventBus } from '../event/eventbus/EventBus'
@@ -887,6 +869,11 @@ export class Draw {
 
   public getImageParticle(): ImageParticle {
     return this.imageParticle
+  }
+
+  // 获取数据图片
+  public getDataImageParticle(): DataImageParticle {
+    return this.dataImageParticle
   }
 
   public getTableTool(): TableTool {
@@ -1749,9 +1736,8 @@ export class Draw {
       }
       const ascent =
         (element.imgDisplay !== ImageDisplay.INLINE &&
-          element.type === ElementType.IMAGE) ||
-        element.type === ElementType.LATEX ||
-          element.type === ElementType.DATA_IMAGE
+          (element.type === ElementType.IMAGE || element.type === ElementType.DATA_IMAGE)) ||
+        element.type === ElementType.LATEX
           ? metrics.height + rowMargin
           : metrics.boundingBoxAscent + rowMargin
       const height =
@@ -2166,7 +2152,7 @@ export class Draw {
         ) {
           // 控件隐藏时不绘制
           this.textParticle.complete()
-        } else if (element.type === ElementType.IMAGE) {
+        } else if (element.type === ElementType.IMAGE || element.type === ElementType.DATA_IMAGE) {
           this.textParticle.complete()
           // 浮动图片单独绘制
           if (
@@ -2174,14 +2160,15 @@ export class Draw {
             element.imgDisplay !== ImageDisplay.FLOAT_TOP &&
             element.imgDisplay !== ImageDisplay.FLOAT_BOTTOM
           ) {
-            this.imageParticle.render(ctx, element, x, y + offsetY)
+            if (element.type === ElementType.DATA_IMAGE) {
+              this.dataImageParticle.render(ctx, element, x, y + offsetY)
+            } else if (element.type === ElementType.IMAGE) {
+              this.imageParticle.render(ctx, element, x, y + offsetY)
+            }
           }
         } else if (element.type === ElementType.LATEX) {
           this.textParticle.complete()
           this.laTexParticle.render(ctx, element, x, y + offsetY)
-        } else if (element.type === ElementType.DATA_IMAGE) {
-          this.textParticle.complete()
-          this.dataImageParticle.render(ctx, element, x, y + offsetY)
         } else if (element.type === ElementType.TABLE) {
           if (isCrossRowCol) {
             rangeRecord.x = x
@@ -2491,15 +2478,25 @@ export class Draw {
           floatPosition.zone == EditorZone.FOOTER) &&
         element.imgDisplay &&
         imgDisplays.includes(element.imgDisplay) &&
-        element.type === ElementType.IMAGE
+        // 处理数据图片浮动
+        (element.type === ElementType.IMAGE || element.type === ElementType.DATA_IMAGE)
       ) {
         const imgFloatPosition = element.imgFloatPosition!
-        this.imageParticle.render(
-          ctx,
-          element,
-          imgFloatPosition.x * scale,
-          imgFloatPosition.y * scale
-        )
+        if (element.type === ElementType.DATA_IMAGE){
+          this.dataImageParticle.render(
+            ctx,
+            element,
+            imgFloatPosition.x * scale,
+            imgFloatPosition.y * scale
+          )
+        }else if (element.type === ElementType.IMAGE){
+          this.imageParticle.render(
+            ctx,
+            element,
+            imgFloatPosition.x * scale,
+            imgFloatPosition.y * scale
+          )
+        }
       }
     }
   }

@@ -5,17 +5,15 @@ import {
   IComputePageRowPositionPayload,
   IComputePageRowPositionResult,
   IComputeRowPositionPayload,
+  ICurrentPosition,
   IFloatPosition,
   IGetFloatPositionByXYPayload,
+  IGetPositionByXYPayload,
+  IPositionContext,
   ISetSurroundPositionPayload
 } from '../../interface/Position'
 import { IEditorOption } from '../../interface/Editor'
 import { IElement, IElementPosition } from '../../interface/Element'
-import {
-  ICurrentPosition,
-  IGetPositionByXYPayload,
-  IPositionContext
-} from '../../interface/Position'
 import { Draw } from '../draw/Draw'
 import { EditorMode, EditorZone } from '../../dataset/enum/Editor'
 import { deepClone, isRectIntersect } from '../../utils'
@@ -151,10 +149,9 @@ export class Position {
         const metrics = element.metrics
         const offsetY =
           (element.imgDisplay !== ImageDisplay.INLINE &&
-            element.type === ElementType.IMAGE) ||
-          element.type === ElementType.LATEX ||
-            // 数据图片元素
-            element.type === ElementType.DATA_IMAGE
+            (element.type === ElementType.IMAGE || element.type === ElementType.DATA_IMAGE)) ||
+          element.type === ElementType.LATEX
+          // 数据图片元素
             ? curRow.ascent - metrics.height
             : curRow.ascent
         // 偏移量
@@ -416,7 +413,7 @@ export class Position {
                     tablePosition.isCheckbox ||
                     tdValueElement.type === ElementType.CHECKBOX ||
                     tdValueElement.controlComponent ===
-                      ControlComponent.CHECKBOX,
+                    ControlComponent.CHECKBOX,
                   isRadio:
                     tdValueElement.type === ElementType.RADIO ||
                     tdValueElement.controlComponent === ControlComponent.RADIO,
@@ -701,7 +698,7 @@ export class Position {
       } = this.floatPositionList[f]
       if (
         currentPageNo === pageNo &&
-        element.type === ElementType.IMAGE &&
+        (element.type === ElementType.IMAGE || element.type === ElementType.DATA_IMAGE) &&
         element.imgDisplay &&
         payload.imgDisplays.includes(element.imgDisplay) &&
         (!floatElementZone || floatElementZone === currentZone)

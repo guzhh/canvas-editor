@@ -5,6 +5,7 @@ import { DataImageType } from '../../../../dataset/enum/DataImage'
 import { generateBarcodeImage } from './utils/BarcodeUtils'
 import { generateQrcodeImage } from './utils/QrcodeUtils'
 import { generateOthersImage } from './utils/OthersUtils'
+import { ImageDisplay } from '../../../../dataset/enum/Common'
 
 export class DataImageParticle extends ImageParticle {
   // 生成数据图片
@@ -24,6 +25,11 @@ export class DataImageParticle extends ImageParticle {
     return generateOthersImage()
   }
 
+  public createFloatImage(element: IElement) {
+    super.createFloatImage(element)
+    this.floatImage!.src = element.dataImageUrl!
+  }
+
   // 渲染图片
   public render(ctx: CanvasRenderingContext2D, element: IElement, x: number, y: number) {
     const { scale } = this.options
@@ -40,9 +46,17 @@ export class DataImageParticle extends ImageParticle {
         const img = new Image()
         img.src = element.dataImageUrl!
         img.onload = () => {
-          ctx.drawImage(img, x, y, width, height)
           this.imageCache.set(imageCacheKey, img)
           resolve(element)
+          if (element.imgDisplay === ImageDisplay.FLOAT_BOTTOM){
+            this.draw.render({
+              isCompute: false,
+              isSetCursor: false,
+              isSubmitHistory: false
+            })
+          }else {
+            ctx.drawImage(img, x, y, width, height)
+          }
         }
         img.onerror = error => {
           reject(error)
