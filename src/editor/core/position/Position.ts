@@ -148,9 +148,10 @@ export class Position {
         const element = curRow.elementList[j]
         const metrics = element.metrics
         const offsetY =
-          (element.imgDisplay !== ImageDisplay.INLINE &&
-            (element.type === ElementType.IMAGE || element.type === ElementType.DATA_IMAGE)) ||
-          element.type === ElementType.LATEX
+          !element.hide &&
+          ((element.imgDisplay !== ImageDisplay.INLINE &&
+              (element.type === ElementType.IMAGE || element.type === ElementType.DATA_IMAGE)) ||
+            element.type === ElementType.LATEX)
           // 数据图片元素
             ? curRow.ascent - metrics.height
             : curRow.ascent
@@ -213,7 +214,7 @@ export class Position {
         index++
         x += metrics.width
         // 计算表格内元素位置
-        if (element.type === ElementType.TABLE) {
+        if (element.type === ElementType.TABLE && !element.hide) {
           const tdPaddingWidth = tdPadding[1] + tdPadding[3]
           const tdPaddingHeight = tdPadding[0] + tdPadding[2]
           for (let t = 0; t < element.trList!.length; t++) {
@@ -796,6 +797,7 @@ export class Position {
   }
 
   public setSurroundPosition(payload: ISetSurroundPositionPayload) {
+    const { scale } = this.options
     const {
       pageNo,
       row,
@@ -817,8 +819,10 @@ export class Position {
         if (floatPosition.pageNo !== pageNo) continue
         const surroundRect = {
           ...floatPosition,
-          width: surroundElement.width!,
-          height: surroundElement.height!
+          x: floatPosition.x * scale,
+          y: floatPosition.y * scale,
+          width: surroundElement.width! * scale,
+          height: surroundElement.height! * scale
         }
         if (isRectIntersect(rowElementRect, surroundRect)) {
           row.isSurround = true

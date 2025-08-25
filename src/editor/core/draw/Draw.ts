@@ -811,6 +811,7 @@ export class Draw {
         while (deleteIndex >= start) {
           const deleteElement = elementList[deleteIndex]
           if (
+            deleteElement?.hide ||
             deleteElement?.control?.hide ||
             deleteElement?.area?.hide ||
             (tdDeletable !== false &&
@@ -1380,12 +1381,14 @@ export class Draw {
       x += isStartElement ? offsetX : 0
       y += isStartElement ? curRow.offsetY || 0 : 0
       if (
-        (element.control?.hide || element.area?.hide) &&
+        (element.hide || element.control?.hide || element.area?.hide) &&
         !this.isDesignMode()
       ) {
+        const preElement = curRow.elementList[curRow.elementList.length - 1]
         metrics.height =
-          curRow.elementList[curRow.elementList.length - 1]?.metrics.height ||
-          this.options.defaultSize * scale
+          preElement?.metrics.height || this.options.defaultSize * scale
+        metrics.boundingBoxAscent = preElement?.metrics.boundingBoxAscent || 0
+        metrics.boundingBoxDescent = preElement?.metrics.boundingBoxDescent || 0
       } else if (
         element.type === ElementType.IMAGE ||
         element.type === ElementType.LATEX ||
@@ -1735,9 +1738,10 @@ export class Draw {
         }
       }
       const ascent =
-        (element.imgDisplay !== ImageDisplay.INLINE &&
-          (element.type === ElementType.IMAGE || element.type === ElementType.DATA_IMAGE)) ||
-        element.type === ElementType.LATEX
+        !element.hide &&
+        ((element.imgDisplay !== ImageDisplay.INLINE &&
+            (element.type === ElementType.IMAGE || element.type === ElementType.DATA_IMAGE)) ||
+          element.type === ElementType.LATEX)
           ? metrics.height + rowMargin
           : metrics.boundingBoxAscent + rowMargin
       const height =
@@ -2147,7 +2151,7 @@ export class Draw {
         const preElement = curRow.elementList[j - 1]
         // 元素绘制
         if (
-          (element.control?.hide || element.area?.hide) &&
+          (element.hide || element.control?.hide || element.area?.hide) &&
           !this.isDesignMode()
         ) {
           // 控件隐藏时不绘制
@@ -2405,7 +2409,7 @@ export class Draw {
         }
         index++
         // 绘制表格内元素
-        if (element.type === ElementType.TABLE) {
+        if (element.type === ElementType.TABLE && !element.hide) {
           const tdPaddingWidth = tdPadding[1] + tdPadding[3]
           for (let t = 0; t < element.trList!.length; t++) {
             const tr = element.trList![t]
