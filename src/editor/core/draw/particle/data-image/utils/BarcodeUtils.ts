@@ -1,8 +1,8 @@
 import JsBarcode from 'jsbarcode'
 import { DataImageType } from '../../../../../dataset/enum/DataImage'
-import { DataMap } from '../../../../../interface/DataImage'
+import { IDataImageMap } from '../../../../../interface/DataImage'
 
-export const generateBarcodeImage = (data: DataMap[DataImageType.BAR_CODE]) => {
+export const generateBarcodeImage = (data: IDataImageMap[DataImageType.BAR_CODE]) => {
 // 定义SVG命名空间URI
   const SVG_NS = 'http://www.w3.org/2000/svg'
 

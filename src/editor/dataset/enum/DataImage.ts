@@ -4,5 +4,7 @@ export enum DataImageType {
   // 月经史
   MH = 'menstrual-history',
   // 胎心位置
-  HR = 'fetal-heartbeat-location'
+  HR = 'fetal-heartbeat-location',
+  // 牙位图
+  FDI= 'dental-position',
 }

@@ -1,8 +1,8 @@
-import { DataMap } from '../../../../../interface/DataImage'
+import { IDataImageMap } from '../../../../../interface/DataImage'
 import { DataImageType } from '../../../../../dataset/enum/DataImage'
 import { convertStringToBase64 } from '../../../../../utils'
 
-export const generateFetalHeartbeatLocationImage = (data: DataMap[DataImageType.HR]) => {
+export const generateFetalHeartbeatLocationImage = (data: IDataImageMap[DataImageType.HR]) => {
   let svg = `
   <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0,0,60,60" width="60" height="60" type="fetalHeart">
     <g style="stroke:#000; stroke-width:1">
@@ -40,7 +40,7 @@ export const generateFetalHeartbeatLocationImage = (data: DataMap[DataImageType.
 <!--    </svg>-->
   `
 
-  const keyMap: Record<keyof DataMap[DataImageType.HR], string> = {
+  const keyMap: Record<keyof IDataImageMap[DataImageType.HR], string> = {
     1: `<line x1="20" y1="10" x2="20" y2="20"></line>`,
     2: `<line x1="40" y1="10" x2="40" y2="20"></line>`,
     3: `<line x1="20" y1="25" x2="20" y2="35"></line>`,
@@ -50,7 +50,7 @@ export const generateFetalHeartbeatLocationImage = (data: DataMap[DataImageType.
   }
 
   Object.keys(data).forEach(key => {
-    const k = Number(key) as keyof DataMap[DataImageType.HR]
+    const k = Number(key) as keyof IDataImageMap[DataImageType.HR]
     if (data[k]) {
       svg += keyMap[k]
     }
@@ -64,8 +64,7 @@ export const generateFetalHeartbeatLocationImage = (data: DataMap[DataImageType.
   const parser = new DOMParser()
   // 将svg字符串转为dom
   const svgElement = parser.parseFromString(svg, 'image/svg+xml').documentElement
-  console.info(svgElement, svgElement.getAttribute('height'))
-  const width = Number(svgElement.getAttribute('width') || 120)
+  const width = Number(svgElement.getAttribute('width') || 60)
   const height = Number(svgElement.getAttribute('height') || 60)
 
   return {

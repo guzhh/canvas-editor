@@ -1,5 +1,5 @@
 import { ImageParticle } from '../ImageParticle'
-import { DataMap, IDataImage } from '../../../../interface/DataImage'
+import { IDataImageMap, IDataImage } from '../../../../interface/DataImage'
 import { IElement } from '../../../../interface/Element'
 import { DataImageType } from '../../../../dataset/enum/DataImage'
 import { generateBarcodeImage } from './utils/BarcodeUtils'
@@ -8,23 +8,28 @@ import { generateOthersImage } from './utils/OthersUtils'
 import { ImageDisplay } from '../../../../dataset/enum/Common'
 import { generateMenstrualHistoryImage } from './utils/MhUtils'
 import { generateFetalHeartbeatLocationImage } from './utils/HrUtils'
+import { generateFDIImage } from './utils/FdiUtils'
 
 export class DataImageParticle extends ImageParticle {
   // 生成数据图片
   public static dataToImage(data: IDataImage): { image: string, width: number, height: number, mime: string, } {
     if (data.type === DataImageType.BAR_CODE) {
-      return generateBarcodeImage(data.data as DataMap[DataImageType.BAR_CODE])
+      return generateBarcodeImage(data.data as IDataImageMap[DataImageType.BAR_CODE])
     }
     if (data.type === DataImageType.QR_CODE) {
-      return generateQrcodeImage(data.data as DataMap[DataImageType.QR_CODE])
+      return generateQrcodeImage(data.data as IDataImageMap[DataImageType.QR_CODE])
     }
     // 月经史
     if (data.type === DataImageType.MH){
-      return generateMenstrualHistoryImage(data.data as DataMap[DataImageType.MH])
+      return generateMenstrualHistoryImage(data.data as IDataImageMap[DataImageType.MH])
     }
     // 胎心位置
     if (data.type === DataImageType.HR){
-      return generateFetalHeartbeatLocationImage(data.data as DataMap[DataImageType.HR])
+      return generateFetalHeartbeatLocationImage(data.data as IDataImageMap[DataImageType.HR])
+    }
+    // 牙位图
+    if (data.type === DataImageType.FDI){
+      return generateFDIImage(data.data as IDataImageMap[DataImageType.FDI])
     }
     return generateOthersImage()
   }

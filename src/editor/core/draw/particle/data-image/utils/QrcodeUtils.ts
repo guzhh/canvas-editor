@@ -1,9 +1,9 @@
-import { DataMap } from '../../../../../interface/DataImage'
+import { IDataImageMap } from '../../../../../interface/DataImage'
 import { DataImageType } from '../../../../../dataset/enum/DataImage'
 import { BrowserQRCodeSvgWriter } from '@zxing/browser'
 import { EncodeHintType } from '@zxing/library'
 
-export const generateQrcodeImage = (data: DataMap[DataImageType.QR_CODE]) => {
+export const generateQrcodeImage = (data: IDataImageMap[DataImageType.QR_CODE]) => {
 
   const codeWriter = new BrowserQRCodeSvgWriter()
   const hints = new Map<EncodeHintType, any>()
