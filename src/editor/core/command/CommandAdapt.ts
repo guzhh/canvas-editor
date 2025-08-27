@@ -1926,6 +1926,42 @@ export class CommandAdapt {
     this.draw.setValue(payload, options)
   }
 
+  // 获取全部DataImage 元素
+  public getDataImageList(): IElement[]{
+    const result: IElement[] = []
+    const getDataImage = (elementList: IElement[]) => {
+      let i = 0
+      while (i < elementList.length) {
+        const element = elementList[i]
+        i++
+        if (element.type === ElementType.TABLE) {
+          const trList = element.trList!
+          for (let r = 0; r < trList.length; r++) {
+            const tr = trList[r]
+            for (let d = 0; d < tr.tdList.length; d++) {
+              const td = tr.tdList[d]
+              getDataImage(td.value)
+            }
+          }
+        }
+        if (element.type === ElementType.DATA_IMAGE){
+          result.push(element)
+        }
+      }
+    }
+    const data = [
+      this.draw.getHeaderElementList(),
+      this.draw.getOriginalMainElementList(),
+      this.draw.getFooterElementList()
+    ]
+    for (const elementList of data) {
+      getDataImage(elementList)
+    }
+    return zipElementList(result, {
+      extraPickAttrs: ['id', 'controlId']
+    })
+  }
+
   public removeControl(payload?: IRemoveControlOption) {
     if (payload?.id || payload?.conceptId) {
       const { id, conceptId } = payload
@@ -2365,7 +2401,6 @@ export class CommandAdapt {
     // 插入控件
     this.draw.insertElementList([cloneElement])
   }
-
   public getContainer(): HTMLDivElement {
     return this.draw.getContainer()
   }

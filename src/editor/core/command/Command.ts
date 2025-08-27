@@ -137,6 +137,8 @@ export class Command {
   public getTitleValue: CommandAdapt['getTitleValue']
   public getPositionContextByEvent: CommandAdapt['getPositionContextByEvent']
   public getElementById: CommandAdapt['getElementById']
+  // 获取全部DataImage元素
+  public getDataImageList: CommandAdapt['getDataImageList']
 
   constructor(adapt: CommandAdapt) {
     // 全局命令
@@ -276,6 +278,8 @@ export class Command {
     this.getTitleValue = adapt.getTitleValue.bind(adapt)
     this.getPositionContextByEvent = adapt.getPositionContextByEvent.bind(adapt)
     this.getElementById = adapt.getElementById.bind(adapt)
+    // 获取全部数据图像列表
+    this.getDataImageList = adapt.getDataImageList.bind(adapt)
     // 控件
     this.executeSetControlValue = adapt.setControlValue.bind(adapt)
     this.executeSetControlValueList = adapt.setControlValueList.bind(adapt)

@@ -509,8 +509,8 @@ export class Previewer {
     ) {
       return
     }
-    // TODO：如果不是数据图片则正常预览，如果是数据图片则对外抛出事件
-    if (this.curElement.type !== ElementType.DATA_IMAGE || !this.eventBus.isSubscribe('dataImageDblclick')) {
+    // TODO：如果不是数据图片则正常预览，如果是数据图片则对外抛出事件, 如果是禁用状态下，则不对外抛出事件
+    if (this.curElement.type !== ElementType.DATA_IMAGE || !this.eventBus.isSubscribe('dataImageDblclick') || this.draw.isReadonly() || this.draw.isPrintMode()) {
       // 获取所有图片
       this.imageList = this.draw.getImageParticle().getOriginalMainImageList()
       // 拿到要预览的图片
