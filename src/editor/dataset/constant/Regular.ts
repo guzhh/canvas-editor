@@ -16,4 +16,5 @@ export const UNICODE_SYMBOL_REG = new RegExp(
 export const PUNCTUATION_REG =
   /[、，。？！；：……「」“”‘’*（）【】〔〕〖〗〘〙〚〛《》———﹝﹞–—\\/·.,!?;:`~<>()[\]{}'"|]/
 
+// 该正则用于匹配字符串开头是否为 零宽字符 或换行符
 export const START_LINE_BREAK_REG = new RegExp(`^[${ZERO}\n]`)

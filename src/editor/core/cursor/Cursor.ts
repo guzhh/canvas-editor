@@ -38,9 +38,9 @@ export class Cursor {
 
   constructor(draw: Draw, canvasEvent: CanvasEvent) {
     this.draw = draw
-    this.container = draw.getContainer()
-    this.position = draw.getPosition()
-    this.options = draw.getOptions()
+    this.container = draw.getContainer() // 编辑器容器
+    this.position = draw.getPosition() // 位置管理器
+    this.options = draw.getOptions() // 编辑器选项
 
     this.cursorDom = document.createElement('div')
     this.cursorDom.classList.add(`${EDITOR_PREFIX}-cursor`)

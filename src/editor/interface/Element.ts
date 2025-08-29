@@ -178,9 +178,25 @@ export type IElement = IElementBasic &
   IAreaElement
 
 export interface IElementMetrics {
+  /**
+   * 元素的宽度，以像素为单位
+   * 表示元素在水平方向上占用的空间大小
+   */
   width: number
+  /**
+   * 元素的高度，以像素为单位
+   * 表示元素在垂直方向上占用的总空间大小
+   */
   height: number
+  /**
+   * 元素基线上方的高度，以像素为单位
+   * 表示从基线到元素顶部的距离，用于确定元素在行内的垂直位置
+   */
   boundingBoxAscent: number
+  /**
+   * 元素基线下方的深度，以像素为单位
+   * 表示从基线到元素底部的距离，用于确定元素在行内的垂直位置
+   */
   boundingBoxDescent: number
 }
 

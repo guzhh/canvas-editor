@@ -115,27 +115,50 @@ export function getUUID(): string {
   )
 }
 
+/**
+ * 将输入的文本拆分为字符数组。
+ * 优先使用 Intl.Segmenter 进行字符分割，如果浏览器不支持该 API，则使用正则表达式匹配的方式。
+ * @param text - 需要拆分的文本
+ * @returns 返回拆分后的字符数组
+ */
 export function splitText(text: string): string[] {
+  // 用于存储拆分后的字符数组
   const data: string[] = []
+
+  // 检查浏览器是否支持 Intl.Segmenter API
   if (Intl.Segmenter) {
+    // 创建 Intl.Segmenter 实例
     const segmenter = new Intl.Segmenter()
+    // 对输入文本进行字符分割
     const segments = segmenter.segment(text)
+    // 遍历分割结果，将每个字符添加到结果数组中
     for (const { segment } of segments) {
       data.push(segment)
     }
   } else {
+    // 如果浏览器不支持 Intl.Segmenter，使用正则表达式匹配字符
+    // 创建一个 Map 用于存储匹配到的字符及其在文本中的索引
     const symbolMap = new Map<number, string>()
+    // 使用正则表达式匹配文本中的所有字符
     for (const match of text.matchAll(UNICODE_SYMBOL_REG)) {
+      // 将匹配到的字符及其索引存入 Map 中
       symbolMap.set(match.index!, match[0])
     }
+    // 初始化遍历文本的索引
     let t = 0
+    // 遍历文本
     while (t < text.length) {
+      // 从 Map 中获取当前索引对应的字符
       const symbol = symbolMap.get(t)
       if (symbol) {
+        // 如果存在匹配的字符，将其添加到结果数组中
         data.push(symbol)
+        // 跳过已匹配字符的长度
         t += symbol.length
       } else {
+        // 如果不存在匹配的字符，将当前字符添加到结果数组中
         data.push(text[t])
+        // 索引递增 1
         t++
       }
     }
@@ -278,10 +301,21 @@ export function cloneProperty<T>(
   }
 }
 
+/**
+ * 从给定对象中选取指定键对应的属性，返回一个包含这些属性的新对象。
+ * @param object - 源对象，从中选取属性。
+ * @param pickKeys - 要选取的属性键数组。
+ * @returns 返回一个新对象，仅包含源对象中指定键对应的属性。
+ * @typeParam T - 源对象的类型。
+ */
 export function pickObject<T>(object: T, pickKeys: (keyof T)[]): T {
+  // 初始化一个空对象，用于存储选取的属性
   const newObject: T = <T>{}
+  // 遍历源对象的所有属性
   for (const key in object) {
+    // 检查当前属性键是否在要选取的键数组中
     if (pickKeys.includes(key)) {
+      // 如果存在，则将该属性添加到新对象中
       newObject[key] = object[key]
     }
   }

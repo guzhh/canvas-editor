@@ -103,6 +103,7 @@ elementList.splice(12, 0, {
   type: ElementType.CONTROL,
   value: '',
   control: {
+    deletable: true,
     conceptId: '1',
     type: ControlType.TEXT,
     value: null,
@@ -117,6 +118,7 @@ elementList.splice(94, 0, {
   type: ElementType.CONTROL,
   value: '',
   control: {
+    deletable: true,
     conceptId: '2',
     type: ControlType.SELECT,
     value: null,
@@ -171,6 +173,7 @@ elementList.splice(335, 0, {
   type: ElementType.CONTROL,
   value: '',
   control: {
+    deletable: true,
     conceptId: '6',
     type: ControlType.TEXT,
     value: null,
@@ -402,6 +405,7 @@ elementList.push(
       type: ElementType.CONTROL,
       value: '',
       control: {
+        deletable: true,
         conceptId: '5',
         type: ControlType.DATE,
         value: [
@@ -428,6 +432,7 @@ elementList.push(
       type: ElementType.CONTROL,
       value: '',
       control: {
+        deletable: true,
         conceptId: '4',
         type: ControlType.TEXT,
         value: null,

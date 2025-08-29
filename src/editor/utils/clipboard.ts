@@ -81,10 +81,19 @@ export function writeElementList(
   writeClipboardItem(text, html, zipElementList(elementList))
 }
 
+/**
+ * 检查剪贴板数据中是否包含文件
+ * @param clipboardData - DataTransfer 对象，代表剪贴板数据
+ * @returns 如果包含文件则返回 true，否则返回 false
+ */
 export function getIsClipboardContainFile(clipboardData: DataTransfer) {
+  // 标记剪贴板中是否包含文件
   let isFile = false
+  // 遍历剪贴板中的所有项目
   for (let i = 0; i < clipboardData.items.length; i++) {
+    // 获取当前遍历到的剪贴板项目
     const item = clipboardData.items[i]
+    // 如果当前项目的类型是文件，则标记为包含文件并跳出循环
     if (item.kind === 'file') {
       isFile = true
       break

@@ -11,26 +11,32 @@ import { formatElementContext } from '../../../utils/element'
 import { CanvasEvent } from '../CanvasEvent'
 
 export function input(data: string, host: CanvasEvent) {
+  // 1. 前置检查，判断是否可输入
   const draw = host.getDraw()
   if (draw.isReadonly() || draw.isDisabled()) return
   const position = draw.getPosition()
   const cursorPosition = position.getCursorPosition()
   if (!data || !cursorPosition) return
-  const isComposing = host.isComposing
+   // 2. 处理输入法合成
+  const isComposing = host.isComposing // 是否正在合成文本
   // 正在合成文本进行非输入操作
   if (isComposing && host.compositionInfo?.value === data) return
+
+  // 3. 获取当前选区和样式
   const rangeManager = draw.getRange()
-  if (!rangeManager.getIsCanInput()) return
+  if (!rangeManager.getIsCanInput()) return // 判断选区是否可输入
   // 移除合成前，缓存设置的默认样式设置
   const defaultStyle =
     rangeManager.getDefaultStyle() || host.compositionInfo?.defaultStyle || null
   // 移除合成输入
   removeComposingInput(host)
   if (!isComposing) {
-    const cursor = draw.getCursor()
-    cursor.clearAgentDomValue()
+    const cursor = draw.getCursor() // 获取光标
+    cursor.clearAgentDomValue() // 清除光标代理dom值
   }
   const { TEXT, HYPERLINK, SUBSCRIPT, SUPERSCRIPT, DATE, TAB } = ElementType
+  
+  // 4. 文本分割和元素创建
   const text = data.replaceAll(`\n`, ZERO)
   const { startIndex, endIndex } = rangeManager.getRange()
   // 格式化元素
@@ -47,6 +53,8 @@ export function input(data: string, host: CanvasEvent) {
       (!copyElement.title?.disabled && !copyElement.control?.disabled)
     ) {
       const nextElement = elementList[endIndex + 1]
+      console.log('copyElement', copyElement, nextElement)
+      
       // 文本、超链接、日期、上下标：复制所有信息（元素类型、样式、特殊属性）
       if (
         !copyElement.type ||
@@ -56,6 +64,7 @@ export function input(data: string, host: CanvasEvent) {
         (copyElement.type === SUBSCRIPT && nextElement?.type === SUBSCRIPT) ||
         (copyElement.type === SUPERSCRIPT && nextElement?.type === SUPERSCRIPT)
       ) {
+        // 复制样式和属性到新元素
         EDITOR_ELEMENT_COPY_ATTR.forEach(attr => {
           // 在分组外无需复制分组信息
           if (attr === 'groupIds' && !nextElement?.groupIds) return
@@ -82,15 +91,19 @@ export function input(data: string, host: CanvasEvent) {
     }
     return newElement
   })
+
+  // 5. 插入文档或控件
   // 控件-移除placeholder
   const control = draw.getControl()
   let curIndex: number
+  
   if (control.getActiveControl() && control.getIsRangeWithinControl()) {
     curIndex = control.setValue(inputData)
     if (!isComposing) {
       control.emitControlContentChange()
     }
   } else {
+     // 正常文档输入：删除选中内容，插入新内容
     const start = startIndex + 1
     if (startIndex !== endIndex) {
       draw.spliceElementList(elementList, start, endIndex - startIndex)
@@ -101,6 +114,7 @@ export function input(data: string, host: CanvasEvent) {
     draw.spliceElementList(elementList, start, 0, inputData)
     curIndex = startIndex + inputData.length
   }
+  // 6. 更新光标和重新渲染
   if (~curIndex) {
     rangeManager.setRange(curIndex, curIndex)
     draw.render({

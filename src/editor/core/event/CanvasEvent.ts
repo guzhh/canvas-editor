@@ -30,22 +30,37 @@ export interface ICompositionInfo {
 }
 
 export class CanvasEvent {
+  // 是否允许选择内容
   public isAllowSelection: boolean
+  // 是否正在进行文本输入合成（如中文输入时的拼音输入阶段）
   public isComposing: boolean
+  // 文本输入合成信息
   public compositionInfo: ICompositionInfo | null
 
+  // 是否允许拖拽操作
   public isAllowDrag: boolean
+  // 是否允许放置操作
   public isAllowDrop: boolean
+  // 缓存的选区范围
   public cacheRange: IRange | null
+  // 缓存的元素列表
   public cacheElementList: IElement[] | null
+  // 缓存的元素位置列表
   public cachePositionList: IElementPosition[] | null
+  // 缓存的位置上下文
   public cachePositionContext: IPositionContext | null
+  // 鼠标按下时的起始位置
   public mouseDownStartPosition: ICurrentPosition | null
 
+  // 绘图实例
   private draw: Draw
+  // 页面容器元素
   private pageContainer: HTMLDivElement
+  // 页面画布列表
   private pageList: HTMLCanvasElement[]
+  // 选区管理器
   private range: RangeManager
+  // 位置管理器
   private position: Position
 
   constructor(draw: Draw) {
@@ -176,6 +191,7 @@ export class CanvasEvent {
     input(data, this)
   }
 
+  // 剪切操作
   public cut() {
     cut(this)
   }

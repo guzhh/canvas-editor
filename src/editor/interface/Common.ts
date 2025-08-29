@@ -9,6 +9,7 @@ export type Primitive =
 
 export type Builtin = Primitive | Function | Date | Error | RegExp
 
+// 递归地将类型 T 的所有属性设为必选属性
 export type DeepRequired<T> = T extends Error
   ? Required<T>
   : T extends Builtin

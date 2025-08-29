@@ -13,7 +13,12 @@ import {
   IGetValueOption,
   IPainterOption
 } from '../../interface/Draw'
-import { IEditorData, IEditorOption, IEditorResult, ISetValueOption } from '../../interface/Editor'
+import {
+  IEditorData,
+  IEditorOption,
+  IEditorResult,
+  ISetValueOption
+} from '../../interface/Editor'
 import {
   IElement,
   IElementFillRect,
@@ -53,7 +58,14 @@ import { SubscriptParticle } from './particle/SubscriptParticle'
 import { SeparatorParticle } from './particle/SeparatorParticle'
 import { PageBreakParticle } from './particle/PageBreakParticle'
 import { Watermark } from './frame/Watermark'
-import { EditorComponent, EditorMode, EditorZone, PageMode, PaperDirection, WordBreak } from '../../dataset/enum/Editor'
+import {
+  EditorComponent,
+  EditorMode,
+  EditorZone,
+  PageMode,
+  PaperDirection,
+  WordBreak
+} from '../../dataset/enum/Editor'
 import { Control } from './control/Control'
 import {
   deleteSurroundElementList,
@@ -66,7 +78,10 @@ import {
 import { CheckboxParticle } from './particle/CheckboxParticle'
 import { RadioParticle } from './particle/RadioParticle'
 import { DeepRequired, IPadding } from '../../interface/Common'
-import { ControlComponent, ControlIndentation } from '../../dataset/enum/Control'
+import {
+  ControlComponent,
+  ControlIndentation
+} from '../../dataset/enum/Control'
 import { WorkerManager } from '../worker/WorkerManager'
 import { Previewer } from './particle/previewer/Previewer'
 import { DateParticle } from './particle/date/DateParticle'
@@ -77,7 +92,10 @@ import { I18n } from '../i18n/I18n'
 import { ImageObserver } from '../observer/ImageObserver'
 import { Zone } from '../zone/Zone'
 import { Footer } from './frame/Footer'
-import { IMAGE_ELEMENT_TYPE, TEXTLIKE_ELEMENT_TYPE } from '../../dataset/constant/Element'
+import {
+  IMAGE_ELEMENT_TYPE,
+  TEXTLIKE_ELEMENT_TYPE
+} from '../../dataset/constant/Element'
 import { ListParticle } from './particle/ListParticle'
 import { Placeholder } from './frame/Placeholder'
 import { EventBus } from '../event/eventbus/EventBus'
@@ -98,79 +116,149 @@ import { Badge } from './frame/Badge'
 import { DataImageParticle } from './particle/data-image/DataImageParticle'
 
 export class Draw {
+  // 编辑器的根容器
   private container: HTMLDivElement
+  // 页面的容器
   private pageContainer: HTMLDivElement
+  // 页面画布列表
   private pageList: HTMLCanvasElement[]
+  // 页面画布的上下文列表
   private ctxList: CanvasRenderingContext2D[]
+  // 当前页面编号
   private pageNo: number
+  // 渲染次数
   private renderCount: number
+  // 页面像素比率，可能为 null
   private pagePixelRatio: number | null
+  // 编辑器模式
   private mode: EditorMode
+  // 编辑器配置项，已深度补全所有属性
   private options: DeepRequired<IEditorOption>
+  // 位置管理实例
   private position: Position
+  // 区域管理实例
   private zone: Zone
+  // 元素列表
   private elementList: IElement[]
+  // 监听器实例
   private listener: Listener
+  // 事件总线实例
   private eventBus: EventBus<EventBusMap>
+  // 重写管理实例
   private override: Override
 
+  // 国际化实例
   private i18n: I18n
+  // 画布事件管理实例
   private canvasEvent: CanvasEvent
+  // 全局事件管理实例
   private globalEvent: GlobalEvent
+  // 光标管理实例
   private cursor: Cursor
+  // 选区管理实例
   private range: RangeManager
+  // 页边距管理实例,用于绘制纸张四角边线
   private margin: Margin
+  // 背景管理实例,用于绘制纸张背景
   private background: Background
+  // 角标管理实例,用于绘制元素角标
   private badge: Badge
+  // 搜索实例,用于搜索元素
   private search: Search
+  // 组管理实例,用于管理元素组
   private group: Group
+  // 区域管理实例
   private area: Area
+  // 下划线管理实例,用于绘制下划线
   private underline: Underline
+  // 删除线管理实例,用于绘制删除线
   private strikeout: Strikeout
+  // 高亮管理实例,用于绘制高亮
   private highlight: Highlight
+  // 历史管理实例,用于管理历史记录
   private historyManager: HistoryManager
+  // 预览器实例,用于预览元素
   private previewer: Previewer
+  // 图片元素实例,用于绘制图片元素
   private imageParticle: ImageParticle
+  // 数学公式元素实例,用于绘制数学公式元素
   private laTexParticle: LaTexParticle
   // 新增数据图片元素，用于展示如二维码、条形码、牙位图等等
   private dataImageParticle: DataImageParticle
+  // 文本元素实例,用于绘制文本元素
   private textParticle: TextParticle
+  // 表格元素实例,用于绘制表格元素
   private tableParticle: TableParticle
+  // 表格工具实例,用于操作表格
   private tableTool: TableTool
+  // 表格操作实例,用于操作表格
   private tableOperate: TableOperate
+  // 分页实例,用于分页
   private pageNumber: PageNumber
+  // 行号实例,用于绘制行号
   private lineNumber: LineNumber
+  // 水印实例,用于绘制水印
   private waterMark: Watermark
+  // 占位符实例,用于绘制占位符
   private placeholder: Placeholder
+  // 页眉实例,用于绘制页眉
   private header: Header
+  // 页脚实例,用于绘制页脚
   private footer: Footer
+  // 超链接元素实例,用于绘制超链接元素
   private hyperlinkParticle: HyperlinkParticle
+  // 日期元素实例,用于绘制日期元素
   private dateParticle: DateParticle
+  // 分隔符元素实例,用于绘制分隔符元素
   private separatorParticle: SeparatorParticle
+  // 分页元素实例,用于绘制分页符元素
   private pageBreakParticle: PageBreakParticle
+  // 上标元素实例,用于绘制上标元素
   private superscriptParticle: SuperscriptParticle
+  // 下标元素实例,用于绘制下标元素
   private subscriptParticle: SubscriptParticle
+  // 复选框元素实例,用于绘制复选框元素
   private checkboxParticle: CheckboxParticle
+  // 单选框元素实例,用于绘制单选框元素
   private radioParticle: RadioParticle
+  // 内容块（iframe、视频、音频）元素实例,用于绘制段落元素
   private blockParticle: BlockParticle
+  // 列表元素实例,用于绘制列表元素
   private listParticle: ListParticle
+  // 换行符元素实例,用于绘制换行符元素
   private lineBreakParticle: LineBreakParticle
+  // 控件元素实例,用于绘制控件元素
   private control: Control
+  // 页面边框实例,用于绘制页面边框
   private pageBorder: PageBorder
+  // worker 管理器实例,用于管理 worker
   private workerManager: WorkerManager
+  // 滚动监听实例,用于监听滚动事件
   private scrollObserver: ScrollObserver
+  // 负责处理 选区自动滚动行为，用于优化用户在进行大面积文本选择时的交互体验。
   private selectionObserver: SelectionObserver
+  // 图片监听实例,用于监听图片加载事件
   private imageObserver: ImageObserver
 
+  // 正则表达式，用于匹配字母
   private LETTER_REG: RegExp
+  // 正则表达式，用于匹配单词
   private WORD_LIKE_REG: RegExp
+  // 编辑器所有行列表
   private rowList: IRow[]
+  // 页面所有行列表
   private pageRowList: IRow[][]
+  // 绘图样式，可能为 null
   private painterStyle: IElementStyle | null
+  // 绘图选项，可能为 null
   private painterOptions: IPainterOption | null
+  // 当前可见的页面编号列表
   private visiblePageNoList: number[]
+  // 当前可见的页面编号
   private intersectionPageNo: number
+  // 用于懒渲染的可见纸张观察器，可能为 null
   private lazyRenderIntersectionObserver: IntersectionObserver | null
+  // 打印模式下的数据，已深度补全所有属性，可能为 null
   private printModeData: Required<IEditorData> | null
 
   constructor(
@@ -181,6 +269,7 @@ export class Draw {
     eventBus: EventBus<EventBusMap>,
     override: Override
   ) {
+    // 创建编辑器容器
     this.container = this._wrapContainer(rootContainer)
     this.pageList = []
     this.ctxList = []
@@ -194,9 +283,9 @@ export class Draw {
     this.eventBus = eventBus
     this.override = override
 
-    this._formatContainer()
-    this.pageContainer = this._createPageContainer()
-    this._createPage(0)
+    this._formatContainer() // 格式化容器
+    this.pageContainer = this._createPageContainer() // 创建纸张容器
+    this._createPage(0) // 创建第一页
 
     this.i18n = new I18n(options.locale)
     this.historyManager = new HistoryManager(this)
@@ -253,6 +342,7 @@ export class Draw {
     this.globalEvent.register()
 
     this.workerManager = new WorkerManager(this)
+    // 对外发布上下文发生改变
     new Actuator(this)
 
     const { letterClass } = options
@@ -1740,7 +1830,8 @@ export class Draw {
       const ascent =
         !element.hide &&
         ((element.imgDisplay !== ImageDisplay.INLINE &&
-            (element.type === ElementType.IMAGE || element.type === ElementType.DATA_IMAGE)) ||
+          (element.type === ElementType.IMAGE ||
+            element.type === ElementType.DATA_IMAGE)) ||
           element.type === ElementType.LATEX)
           ? metrics.height + rowMargin
           : metrics.boundingBoxAscent + rowMargin
@@ -2054,23 +2145,30 @@ export class Draw {
         //   this.control.getControlHighlight(elementList, curRow.startIndex + j)
 
         // 获取当前元素的高亮颜色（排除控件前缀后缀）
-        const currentHighlight = element.highlight || (
-          !isCurrentElementControlPart &&
-          this.control.getControlHighlight(elementList, curRow.startIndex + j)
-        )
+        const currentHighlight =
+          element.highlight ||
+          (!isCurrentElementControlPart &&
+            this.control.getControlHighlight(
+              elementList,
+              curRow.startIndex + j
+            ))
         // 判断前一个元素是否为控件前缀或后缀
-        const isPreElementControlPart = preElement && (
-          preElement.controlComponent === ControlComponent.PREFIX ||
-          preElement.controlComponent === ControlComponent.POSTFIX ||
-          preElement.controlComponent === ControlComponent.PRE_TEXT ||
-          preElement.controlComponent === ControlComponent.POST_TEXT
-        )
+        const isPreElementControlPart =
+          preElement &&
+          (preElement.controlComponent === ControlComponent.PREFIX ||
+            preElement.controlComponent === ControlComponent.POSTFIX ||
+            preElement.controlComponent === ControlComponent.PRE_TEXT ||
+            preElement.controlComponent === ControlComponent.POST_TEXT)
 
         // 获取前一个元素的高亮颜色（排除控件前缀后缀）
-        const preHighlight = (preElement && preElement.highlight) || (
-          preElement && !isPreElementControlPart &&
-          this.control.getControlHighlight(elementList, curRow.startIndex + j - 1)
-        )
+        const preHighlight =
+          (preElement && preElement.highlight) ||
+          (preElement &&
+            !isPreElementControlPart &&
+            this.control.getControlHighlight(
+              elementList,
+              curRow.startIndex + j - 1
+            ))
 
         if (currentHighlight) {
           // 高亮元素相连需立即绘制，并记录下一元素坐标
@@ -2156,7 +2254,10 @@ export class Draw {
         ) {
           // 控件隐藏时不绘制
           this.textParticle.complete()
-        } else if (element.type === ElementType.IMAGE || element.type === ElementType.DATA_IMAGE) {
+        } else if (
+          element.type === ElementType.IMAGE ||
+          element.type === ElementType.DATA_IMAGE
+        ) {
           this.textParticle.complete()
           // 浮动图片单独绘制
           if (
@@ -2330,11 +2431,11 @@ export class Draw {
             if (
               preElement &&
               ((preElement.type === ElementType.SUBSCRIPT &&
-                  element.type !== ElementType.SUBSCRIPT) ||
+                element.type !== ElementType.SUBSCRIPT) ||
                 (preElement.type === ElementType.SUPERSCRIPT &&
                   element.type !== ElementType.SUPERSCRIPT) ||
                 this.getElementSize(preElement) !==
-                this.getElementSize(element))
+                  this.getElementSize(element))
             ) {
               this.strikeout.render(ctx)
             }
@@ -2483,17 +2584,18 @@ export class Draw {
         element.imgDisplay &&
         imgDisplays.includes(element.imgDisplay) &&
         // 处理数据图片浮动
-        (element.type === ElementType.IMAGE || element.type === ElementType.DATA_IMAGE)
+        (element.type === ElementType.IMAGE ||
+          element.type === ElementType.DATA_IMAGE)
       ) {
         const imgFloatPosition = element.imgFloatPosition!
-        if (element.type === ElementType.DATA_IMAGE){
+        if (element.type === ElementType.DATA_IMAGE) {
           this.dataImageParticle.render(
             ctx,
             element,
             imgFloatPosition.x * scale,
             imgFloatPosition.y * scale
           )
-        }else if (element.type === ElementType.IMAGE){
+        } else if (element.type === ElementType.IMAGE) {
           this.imageParticle.render(
             ctx,
             element,

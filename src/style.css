@@ -156,7 +156,8 @@ ul {
   background-color: #e2e6ed;
 }
 
-.menu-item .menu-item__font {
+.menu-item .menu-item__font,
+.menu-item .menu-item__data_image {
   width: 65px;
   position: relative;
 }
@@ -168,6 +169,7 @@ ul {
 }
 
 .menu-item__font .select,
+.menu-item__data_image .select,
 .menu-item__size .select {
   width: 100%;
   height: 100%;

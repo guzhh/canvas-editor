@@ -381,12 +381,24 @@ export class RangeManager {
     return rangeList
   }
 
+  /**
+   * 判断当前选区是否可以输入内容
+   * @returns 如果可以输入返回 true，否则返回 false
+   */
   public getIsCanInput(): boolean {
+    // 获取当前选区的起始和结束索引
     const { startIndex, endIndex } = this.getRange()
+    // 如果选区未设置（起始和结束索引都为 -1），则不能输入
     if (!~startIndex && !~endIndex) return false
+    // 获取所有元素列表
     const elementList = this.draw.getElementList()
+    // 获取选区起始位置的元素
     const startElement = elementList[startIndex]
+
+    // 如果选区是一个点（起始和结束索引相同）
     if (startIndex === endIndex) {
+      // 检查起始元素及其下一个元素是否为前缀文本，并且起始元素是否为后缀文本
+      // 若都不满足，则可以输入
       return (
         (startElement.controlComponent !== ControlComponent.PRE_TEXT ||
           elementList[startIndex + 1]?.controlComponent !==
@@ -394,14 +406,19 @@ export class RangeManager {
         startElement.controlComponent !== ControlComponent.POST_TEXT
       )
     }
+
+    // 获取选区结束位置的元素
     const endElement = elementList[endIndex]
     // 选区前后不是控件 || 选区前不是控件或是后缀&&选区后不是控件或是后缀 || 选区在控件内
     return (
+      // 情况1：选区前后元素都不是控件
       (!startElement.controlId && !endElement.controlId) ||
+      // 情况2：选区前元素不是控件或是后缀，且选区后元素不是控件或是后缀
       ((!startElement.controlId ||
         startElement.controlComponent === ControlComponent.POSTFIX) &&
         (!endElement.controlId ||
           endElement.controlComponent === ControlComponent.POSTFIX)) ||
+      // 情况3：选区在同一个控件内，且结束元素不是前缀文本、后缀文本和后缀
       (!!startElement.controlId &&
         endElement.controlId === startElement.controlId &&
         endElement.controlComponent !== ControlComponent.PRE_TEXT &&

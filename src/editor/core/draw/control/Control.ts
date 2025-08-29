@@ -563,39 +563,57 @@ export class Control {
     }
   }
 
+  /**
+   * 触发控件内容变更事件
+   * @param options - 可选参数，包含控件元素、上下文信息和控件值等
+   */
   public emitControlContentChange(options?: IControlChangeOption) {
+    // 检查是否有订阅控件内容变更事件
     const isSubscribeControlContentChange = this.eventBus.isSubscribe(
       'controlContentChange'
     )
+    // 如果没有订阅事件且没有设置监听器，则直接返回
     if (
       !isSubscribeControlContentChange &&
       !this.listener.controlContentChange
     ) {
       return
     }
+    // 获取控件元素，优先使用传入的控件元素，若没有则使用当前激活控件的元素
     const controlElement =
       options?.controlElement || this.activeControl?.getElement()
+    // 若未获取到控件元素，则直接返回
     if (!controlElement) return
     // 控件被删除不触发事件
+    // 获取元素列表，优先使用传入的元素列表，若没有则获取当前元素列表
     const elementList = options?.context?.elementList || this.getElementList()
+    // 获取选区起始索引，优先使用传入的选区，若没有则获取当前选区的起始索引
     const { startIndex } = options?.context?.range || this.getRange()
+    // 若起始索引对应的元素没有 controlId，说明控件可能已被删除，不触发事件
     if (!elementList[startIndex]?.controlId) return
     // 格式化回调数据
+    // 获取控件值，优先使用传入的控件值，若没有则根据上下文获取控件元素列表
     const controlValue =
       options?.controlValue || this.getControlElementList(options?.context)
     let control: IControl
+    // 若获取到了控件值，则从压缩后的元素列表中获取控件信息
     if (controlValue?.length) {
       control = zipElementList(controlValue)[0].control!
     } else {
+      // 若未获取到控件值，则使用控件元素的控件信息，并将值置为空数组
       control = controlElement.control!
       control.value = []
     }
+    // 若未获取到控件信息，则直接返回
     if (!control) return
+    // 构建控件内容变更事件的载荷数据
     const payload: IControlContentChangeResult = {
       control,
       controlId: controlElement.controlId!
     }
+    // 触发监听器中的控件内容变更回调
     this.listener.controlContentChange?.(payload)
+    // 若有订阅控件内容变更事件，则触发该事件
     if (isSubscribeControlContentChange) {
       this.eventBus.emit('controlContentChange', payload)
     }

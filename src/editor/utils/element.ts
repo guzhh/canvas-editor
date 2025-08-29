@@ -75,6 +75,13 @@ export function formatElementList(
   } = options
   const startElement = elementList[0]
   // 非首字符零宽节点文本元素则补偿-列表元素内部会补偿此处忽略
+  // 判断是否需要在元素列表开头插入一个零宽节点
+  // 满足以下任一条件时会执行插入操作：
+  // 1. isForceCompensation 为 true，表示强制补偿字符
+  // 2. 同时满足以下条件：
+  //    a. isHandleFirstElement 为 true，表示需要处理首字符
+  //    b. 首元素的类型不是列表（ElementType.LIST）
+  //    c. 首元素的类型存在且不是文本类型（ElementType.TEXT），或者首元素的值不是零宽字符或者不是换行符
   if (
     isForceCompensation ||
     (isHandleFirstElement &&
@@ -82,6 +89,7 @@ export function formatElementList(
       ((startElement?.type && startElement.type !== ElementType.TEXT) ||
         !START_LINE_BREAK_REG.test(startElement?.value)))
   ) {
+    // 在元素列表开头插入一个零宽节点，用于补偿字符
     elementList.unshift({
       value: ZERO
     })
@@ -296,7 +304,7 @@ export function formatElementList(
         ...controlDefaultStyle,
         color: editorOptions.control.bracketColor
       }
-      // 前缀
+      // 前缀，将前缀拆分成单个字符
       const prefixStrList = splitText(prefix || controlOption.prefix)
       for (let p = 0; p < prefixStrList.length; p++) {
         const value = prefixStrList[p]
@@ -333,6 +341,7 @@ export function formatElementList(
         (value && value.length) ||
         type === ControlType.CHECKBOX ||
         type === ControlType.RADIO ||
+        // 当控件类型为下拉选择框（ControlType.SELECT），且存在 code 参数，但值为空或长度为 0 时，也需要处理
         (type === ControlType.SELECT && code && (!value || !value.length))
       ) {
         let valueList: IElement[] = value ? deepClone(value) : []
@@ -557,18 +566,29 @@ export function formatElementList(
   }
 }
 
+/**
+ * 比较两个元素对象，判断除了 `value` 属性外，其他属性是否都相同。
+ * 对于 `groupIds` 数组属性，会使用 `isArrayEqual` 方法进行特殊比较。
+ * @param source - 源元素对象
+ * @param target - 目标元素对象
+ * @returns 如果除 `value` 属性外其他属性都相同，返回 `true`；否则返回 `false`
+ */
 export function isSameElementExceptValue(
   source: IElement,
   target: IElement
 ): boolean {
+  // 获取源元素对象的所有属性名
   const sourceKeys = Object.keys(source)
+  // 获取目标元素对象的所有属性名
   const targetKeys = Object.keys(target)
+  // 如果属性数量不一致，直接返回 false
   if (sourceKeys.length !== targetKeys.length) return false
+  // 遍历源元素对象的所有属性名
   for (let s = 0; s < sourceKeys.length; s++) {
     const key = sourceKeys[s] as never
-    // 值不需要校验
+    // 值属性不需要校验，跳过
     if (key === 'value') continue
-    // groupIds数组需特殊校验数组是否相等
+    // groupIds 数组需特殊校验数组是否相等，如果相等则跳过
     if (
       key === 'groupIds' &&
       Array.isArray(source[key]) &&
@@ -577,33 +597,47 @@ export function isSameElementExceptValue(
     ) {
       continue
     }
+    // 如果对应属性值不相等，返回 false
     if (source[key] !== target[key]) {
       return false
     }
   }
+  // 所有属性都相等，返回 true
   return true
 }
 interface IPickElementOption {
   extraPickAttrs?: Array<keyof IElement>
 }
+/**
+ * 从给定的元素对象中选取指定属性，生成一个新的元素对象
+ * @param payload - 源元素对象
+ * @param option - 配置选项，可指定额外需要选取的属性
+ * @returns 包含指定属性的新元素对象
+ */
 export function pickElementAttr(
   payload: IElement,
   option: IPickElementOption = {}
 ): IElement {
+  // 从配置选项中解构出额外需要选取的属性
   const { extraPickAttrs } = option
+  // 初始化需要选取的属性数组，默认包含 EDITOR_ELEMENT_ZIP_ATTR 中的属性
   const zipAttrs = [...EDITOR_ELEMENT_ZIP_ATTR]
+  // 如果存在额外需要选取的属性，则将其添加到属性数组中
   if (extraPickAttrs) {
     zipAttrs.push(...extraPickAttrs)
   }
+  // 初始化新元素对象，处理换行符，将零宽字符转换为换行符
   const element: IElement = {
     value: payload.value === ZERO ? `\n` : payload.value
   }
+  // 遍历属性数组，将源元素对象中存在的属性添加到新元素对象中
   zipAttrs.forEach(attr => {
     const value = payload[attr] as never
     if (value !== undefined) {
       element[attr] = value
     }
   })
+  // 返回包含指定属性的新元素对象
   return element
 }
 
@@ -942,12 +976,22 @@ export function isTextLikeElement(element: IElement): boolean {
   return !element.type || TEXTLIKE_ELEMENT_TYPE.includes(element.type)
 }
 
+/**
+ * 根据给定的索引从元素列表中获取参考元素。
+ * 如果当前元素满足特定条件（非列表元素、是换行符、下一个元素不是换行符且区域相同），则返回下一个元素作为参考元素，否则返回当前元素。
+ * @param elementList - 元素列表，包含多个 IElement 类型的元素
+ * @param anchorIndex - 锚点索引，用于指定从元素列表中获取元素的位置
+ * @returns 如果指定索引处的元素存在，则返回该元素或下一个符合条件的元素；否则返回 null
+ */
 export function getAnchorElement(
   elementList: IElement[],
   anchorIndex: number
 ): IElement | null {
+  // 获取指定索引处的元素
   const anchorElement = elementList[anchorIndex]
+  // 如果指定索引处的元素不存在，直接返回 null
   if (!anchorElement) return null
+  // 获取指定索引下一个位置的元素
   const anchorNextElement = elementList[anchorIndex + 1]
   // 非列表元素 && 当前元素是换行符 && 下一个元素不是换行符 && 区域相同 => 则以下一个元素作为参考元素
   return !anchorElement.listId &&
