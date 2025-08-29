@@ -23,9 +23,13 @@ export interface IControlSelect {
   valueSets: IValueSet[]
   // 2025年8月8日17:19:46， 新增支持自定义弹窗，用于用户自己控制弹出层
   isCustomPopup?: boolean
+  // 是否允许多选
   isMultiSelect?: boolean
+  // 多选时的值分隔符
   multiSelectDelimiter?: string
+  // 下拉选择独有的选项配置
   selectExclusiveOptions?: {
+    // 是否允许输入
     inputAble?: boolean
   }
 }
@@ -41,7 +45,12 @@ export interface IControlCheckbox {
 export interface IControlRadio {
   code: string | null
   flexDirection: FlexDirection
-  valueSets: IValueSet[]
+  valueSets: IValueSet[],
+  // 日期选择独有的选项配置
+  dateExclusiveOptions?: {
+    // 是否允许输入
+    inputAble?: boolean
+  }
 }
 
 export interface IControlDate {
@@ -72,6 +81,7 @@ export interface IControlRule {
 export interface IControlBasic {
   type: ControlType
   value: IElement[] | null
+  label?: string // 控件标签
   placeholder?: string
   conceptId?: string
   prefix?: string

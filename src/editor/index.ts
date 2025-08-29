@@ -78,7 +78,7 @@ import { version as EDITOR_VERSION } from '../../package.json'
 import { DataImageType } from './dataset/enum/DataImage'
 
 export default class Editor {
-  public command: Command
+  public command: Command 
   public listener: Listener
   public eventBus: EventBus<EventBusMap>
   public override: Override
@@ -110,6 +110,7 @@ export default class Editor {
       mainElementList,
       footerElementList
     ]
+    // 对编辑器原始数据进行格式化处理，将其格式化成一个巨大的 elementList
     pageComponentData.forEach(elementList => {
       formatElementList(elementList, {
         editorOptions,
@@ -135,7 +136,7 @@ export default class Editor {
       this.eventBus,
       this.override
     )
-    // 命令
+    // 命令系统，CommandAdapt 负责将命令转换为具体的操作， Command 负责对外进行暴露
     this.command = new Command(new CommandAdapt(draw))
     // 菜单
     const contextMenu = new ContextMenu(draw, this.command)

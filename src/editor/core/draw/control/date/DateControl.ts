@@ -106,8 +106,10 @@ export class DateControl implements IControlInstance {
   ): number {
     // 校验是否可以设置
     if (
-      !options.isIgnoreDisabledRule &&
-      this.control.getIsDisabledControl(context)
+      // 添加控制日期元素不能手动输入，只能通过控件选择
+      !this.element.control?.dateExclusiveOptions?.inputAble ||
+      (!options.isIgnoreDisabledRule &&
+        this.control.getIsDisabledControl(context))
     ) {
       return -1
     }
