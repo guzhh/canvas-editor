@@ -10,7 +10,7 @@ export const generateQrcodeImage = (data: IDataImageMap[DataImageType.QR_CODE]) 
   // 配置默认边距
   hints.set(EncodeHintType.MARGIN, 0)
   // 生成svg元素并增加命名空间
-  const svgElement = codeWriter.write(data.value, 128, 128, hints)
+  const svgElement = codeWriter.write(data.value ?? '-', 128, 128, hints)
   svgElement.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
 
   // 获取SVG字符串

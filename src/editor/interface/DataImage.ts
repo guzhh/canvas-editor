@@ -22,19 +22,6 @@ interface MHWithLastYear extends MHBase {
 export interface IFDIBase {
   name: '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | 'A' | 'B' | 'C' | 'D' | 'E';
   value: string;
-  // E?: string;
-  // D?: string;
-  // C?: string;
-  // B?: string;
-  // A?: string;
-  // '8'?: string;
-  // '7'?: string;
-  // '6'?: string;
-  // '5'?: string;
-  // '4'?: string;
-  // '3'?: string;
-  // '2'?: string;
-  // '1'?: string;
 }
 
 export interface IDataImageMap {
@@ -64,7 +51,12 @@ export interface IDataImageMap {
   }
 }
 
-export interface IDataImage {
+export interface IDataImageRule {
+  deletable?: boolean
+  disabled?: boolean
+}
+
+export type IDataImage = IDataImageRule & {
   type: DataImageType
   // Data类型和type一一对应
   data: IDataImageMap[DataImageType]

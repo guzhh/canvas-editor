@@ -556,7 +556,7 @@ export function formatElementList(
     }
     // 格式化数据图片
     if (el.type === ElementType.DATA_IMAGE){
-      const { image, width, height } = DataImageParticle.dataToImage(el.imageData!)
+      const { image, width, height } = DataImageParticle.dataToImage(el.dataImage!)
       el.width = el.width || width
       el.height = el.height || height
       el.dataImageUrl = image

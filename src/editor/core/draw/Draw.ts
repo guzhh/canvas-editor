@@ -857,6 +857,14 @@ export class Draw {
     })
   }
 
+  /**
+   * 对元素列表进行插入、删除操作
+   * @param elementList - 待操作的元素列表
+   * @param start - 开始操作的索引位置
+   * @param deleteCount - 要删除的元素数量
+   * @param items - 要插入的元素数组，可选
+   * @param options - 操作选项，可选
+   */
   public spliceElementList(
     elementList: IElement[],
     start: number,
@@ -864,26 +872,33 @@ export class Draw {
     items?: IElement[],
     options?: ISpliceElementListOption
   ) {
+    // 从选项中解构出是否忽略删除规则，默认为 false
     const { isIgnoreDeletedRule = false } = options || {}
+    // 从编辑器配置中解构出组配置和模式规则
     const { group, modeRule } = this.options
+    // 如果需要删除元素
     if (deleteCount > 0) {
       // 当最后元素与开始元素列表信息不一致时：清除当前列表信息
       const endIndex = start + deleteCount
       const endElement = elementList[endIndex]
       const endElementListId = endElement?.listId
+      // 如果结束元素存在列表 ID 且与开始元素的前一个元素的列表 ID 不一致
       if (
         endElementListId &&
         elementList[start - 1]?.listId !== endElementListId
       ) {
+        // 从结束索引开始遍历元素列表
         let startIndex = endIndex
         while (startIndex < elementList.length) {
           const curElement = elementList[startIndex]
+          // 如果当前元素的列表 ID 与结束元素的列表 ID 不一致或者元素值为 ZERO，则停止遍历
           if (
             curElement.listId !== endElementListId ||
             curElement.value === ZERO
           ) {
             break
           }
+          // 删除当前元素的列表相关属性
           delete curElement.listId
           delete curElement.listType
           delete curElement.listStyle
@@ -896,34 +911,63 @@ export class Draw {
         !this.isDesignMode() &&
         !this.control.getIsRangeWithinControl()
       ) {
+        // 获取当前表格单元格的可删除属性
         const tdDeletable = this.getTd()?.deletable
+        // 从结束索引前一个位置开始向前遍历要删除的元素
         let deleteIndex = endIndex - 1
         while (deleteIndex >= start) {
           const deleteElement = elementList[deleteIndex]
+          // 判断元素是否可删除
           if (
+            // 判断元素是否可删除，以下任一条件满足则可删除
+            // 1. 元素本身被隐藏
             deleteElement?.hide ||
+            // 2. 元素所属控件被隐藏
             deleteElement?.control?.hide ||
+            // 3. 元素所属区域被隐藏
             deleteElement?.area?.hide ||
-            (tdDeletable !== false &&
+            // 4. 同时满足以下所有删除条件
+            (
+              // 表格单元格可删除标记不为 false
+              tdDeletable !== false &&
+              // 元素所属控件可删除标记不为 false
               deleteElement?.control?.deletable !== false &&
+              // 满足以下任一条件：
+              // - 元素没有 controlId
+              // - 当前模式不是表单模式
+              // - 当前模式下控件不可删除规则未启用
               (!deleteElement.controlId ||
                 this.mode !== EditorMode.FORM ||
                 !modeRule[this.mode].controlDeletableDisabled) &&
+              // 元素标题可删除标记不为 false
               deleteElement?.title?.deletable !== false &&
+              // 数据图片元素可删除标记不为 false
+              deleteElement?.dataImage?.deletable !== false &&
+              // 满足以下任一条件：
+              // - 元素所属组可删除标记不为 false
+              // - 元素没有所属组
               (group.deletable !== false || !deleteElement.groupIds?.length) &&
+              // 满足以下任一条件：
+              // - 元素所属区域可删除标记不为 false
+              // - 元素的区域索引不为 0
               (deleteElement?.area?.deletable !== false ||
-                deleteElement?.areaIndex !== 0))
+                deleteElement?.areaIndex !== 0)
+            )
           ) {
+            // 从元素列表中删除当前元素
             elementList.splice(deleteIndex, 1)
           }
           deleteIndex--
         }
       } else {
+        // 直接删除指定数量的元素
         elementList.splice(start, deleteCount)
       }
     }
     // 循环添加，避免使用解构影响性能
+    // 如果有要插入的元素
     if (items?.length) {
+      // 逐个插入元素到指定位置
       for (let i = 0; i < items.length; i++) {
         elementList.splice(start + i, 0, items[i])
       }
@@ -2906,6 +2950,7 @@ export class Draw {
         curIndex = tablePositionList.length - 1
       }
       const tablePosition = tablePositionList?.[curIndex!]
+      console.info(tablePosition, '🚀 ~ file:Draw.ts line:2909 tablePosition')
       this.position.setCursorPosition(tablePosition || null)
     } else {
       this.position.setCursorPosition(
@@ -2927,6 +2972,12 @@ export class Draw {
         this.previewer.updateResizer(element, position)
       }
     }
+    // todo: 控件绘制边框
+    // if (positionContext.isControl){
+    //   const { index } = positionContext
+    //   const elementList = this.getOriginalElementList()
+    //   console.info(elementList[index!], '🚀 ~ file:Draw.ts line:2935 elementList[index!]')
+    // }
     this.cursor.drawCursor({
       isShow: isShowCursor
     })

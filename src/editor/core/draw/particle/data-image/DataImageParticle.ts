@@ -46,7 +46,7 @@ export class DataImageParticle extends ImageParticle {
     const height = element.height! * scale
 
     // 判断图片缓存中是否存在
-    const imageCacheKey = JSON.stringify(element.imageData)
+    const imageCacheKey = JSON.stringify(element.dataImage)
     if (this.imageCache.has(imageCacheKey)) {
       const img = this.imageCache.get(imageCacheKey)!
       ctx.drawImage(img, x, y, width, height)

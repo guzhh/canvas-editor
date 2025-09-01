@@ -121,7 +121,7 @@ export interface ILaTexElement {
 }
 
 export interface IDataImageElement {
-  imageData?: IDataImage,
+  dataImage?: IDataImage,
   dataImageUrl?: string,
   mime?: 'png' | 'jpg' | 'jpeg' | 'svg'
 }

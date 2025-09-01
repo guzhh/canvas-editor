@@ -1287,14 +1287,14 @@ window.onload = function() {
         type: ElementType.DATA_IMAGE,
         conceptId: new Date().getTime().toString(),
         value: '',
-        imageData: { type: `${li.dataset.type}` as DataImageType, data: { value: '2255522221' } }
+        dataImage: { type: `${li.dataset.type}` as DataImageType, data: { value: '2255522221' } }
       }])
     } else if (li.dataset.type === DataImageType.MH) {
       instance.command.executeInsertElementList([{
         type: ElementType.DATA_IMAGE,
         conceptId: new Date().getTime().toString(),
         value: '',
-        imageData: {
+        dataImage: {
           type: `${li.dataset.type}` as DataImageType, data: {
             firstYear: 12,
             durationDays: 3,
@@ -1310,7 +1310,7 @@ window.onload = function() {
         type: ElementType.DATA_IMAGE,
         conceptId: new Date().getTime().toString(),
         value: '',
-        imageData: {
+        dataImage: {
           type: `${li.dataset.type}` as DataImageType, data: {
             1: true,
             2: true,
@@ -1326,7 +1326,7 @@ window.onload = function() {
         type: ElementType.DATA_IMAGE,
         conceptId: new Date().getTime().toString(),
         value: '',
-        imageData: {
+        dataImage: {
           type: `${li.dataset.type}` as DataImageType, data: {
             '1': [{ name: '1', value: '' }, { name: '2', value: '' }, { name: 'A', value: '' }, { name: 'B', value: ''}],
             '2': [{ name: '1', value: '' }, { name: '2', value: '' }, { name: 'A', value: '' }, { name: 'B', value: ''}],

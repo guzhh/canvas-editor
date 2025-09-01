@@ -9,7 +9,7 @@ export const generateBarcodeImage = (data: IDataImageMap[DataImageType.BAR_CODE]
   // 创建SVG元素
   const svg = document.createElementNS(SVG_NS, 'svg')
 
-  JsBarcode(svg, data.value, {
+  JsBarcode(svg, data.value ?? '-', {
     format: 'code128',
     width: 1,
     height: 40,
