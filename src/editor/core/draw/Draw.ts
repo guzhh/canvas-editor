@@ -2587,10 +2587,10 @@ export class Draw {
       this.control.drawBorder(ctx)
       this.underline.render(ctx)
       this.strikeout.render(ctx)
-      // 绘制批注样式
-      this.group.render(ctx)
       // 绘制选区
       if (!isPrintMode) {
+        // 绘制批注样式
+        this.group.render(ctx) // 当处于打印模式下，不绘制组高亮
         if (rangeRecord.width && rangeRecord.height) {
           const { x, y, width, height } = rangeRecord
           this.range.render(ctx, x, y, width, height)
