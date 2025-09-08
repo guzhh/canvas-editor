@@ -122,7 +122,8 @@ import {
   IGetAreaValueResult,
   IInsertAreaOption,
   ILocationAreaOption,
-  ISetAreaPropertiesOption
+  ISetAreaPropertiesOption,
+  ISetAreaValueOption
 } from '../../interface/Area'
 import { IAreaBadge, IBadge } from '../../interface/Badge'
 import { IRichtextOption } from '../../interface/Command'
@@ -374,12 +375,12 @@ export class CommandAdapt {
       const { endIndex } = this.range.getRange()
       const elementList = this.draw.getElementList()
       const enterElement = elementList[endIndex]
+      this.range.setDefaultStyle({
+        font: payload
+      })
       if (enterElement?.value === ZERO) {
         enterElement.font = payload
       } else {
-        this.range.setDefaultStyle({
-          font: payload
-        })
         isSubmitHistory = false
       }
       this.draw.render({
@@ -409,13 +410,13 @@ export class CommandAdapt {
       const { endIndex } = this.range.getRange()
       const elementList = this.draw.getElementList()
       const enterElement = elementList[endIndex]
+      this.range.setDefaultStyle({
+        size: payload
+      })
       if (enterElement?.value === ZERO) {
         changeElementList.push(enterElement)
         renderOption = { curIndex: endIndex }
       } else {
-        this.range.setDefaultStyle({
-          size: payload
-        })
         this.draw.render({
           curIndex: endIndex,
           isCompute: false,
@@ -458,15 +459,16 @@ export class CommandAdapt {
       const { endIndex } = this.range.getRange()
       const elementList = this.draw.getElementList()
       const enterElement = elementList[endIndex]
+      // 设置默认样式
+      const style = this.range.getDefaultStyle()
+      const anchorSize = style?.size || enterElement.size || defaultSize
+      this.range.setDefaultStyle({
+        size: anchorSize + 2 > maxSize ? maxSize : anchorSize + 2
+      })
       if (enterElement?.value === ZERO) {
         changeElementList.push(enterElement)
         renderOption = { curIndex: endIndex }
       } else {
-        const style = this.range.getDefaultStyle()
-        const anchorSize = style?.size || enterElement.size || defaultSize
-        this.range.setDefaultStyle({
-          size: anchorSize + 2 > maxSize ? maxSize : anchorSize + 2
-        })
         this.draw.render({
           curIndex: endIndex,
           isCompute: false,
@@ -511,15 +513,15 @@ export class CommandAdapt {
       const { endIndex } = this.range.getRange()
       const elementList = this.draw.getElementList()
       const enterElement = elementList[endIndex]
+      const style = this.range.getDefaultStyle()
+      const anchorSize = style?.size || enterElement.size || defaultSize
+      this.range.setDefaultStyle({
+        size: anchorSize - 2 < minSize ? minSize : anchorSize - 2
+      })
       if (enterElement?.value === ZERO) {
         changeElementList.push(enterElement)
         renderOption = { curIndex: endIndex }
       } else {
-        const style = this.range.getDefaultStyle()
-        const anchorSize = style?.size || enterElement.size || defaultSize
-        this.range.setDefaultStyle({
-          size: anchorSize - 2 < minSize ? minSize : anchorSize - 2
-        })
         this.draw.render({
           curIndex: endIndex,
           isCompute: false,
@@ -564,12 +566,12 @@ export class CommandAdapt {
       const { endIndex } = this.range.getRange()
       const elementList = this.draw.getElementList()
       const enterElement = elementList[endIndex]
+      this.range.setDefaultStyle({
+        bold: enterElement.bold ? false : !this.range.getDefaultStyle()?.bold
+      })
       if (enterElement?.value === ZERO) {
         enterElement.bold = !enterElement.bold
       } else {
-        this.range.setDefaultStyle({
-          bold: enterElement.bold ? false : !this.range.getDefaultStyle()?.bold
-        })
         isSubmitHistory = false
       }
       this.draw.render({
@@ -598,14 +600,14 @@ export class CommandAdapt {
       const { endIndex } = this.range.getRange()
       const elementList = this.draw.getElementList()
       const enterElement = elementList[endIndex]
+      this.range.setDefaultStyle({
+        italic: enterElement.italic
+          ? false
+          : !this.range.getDefaultStyle()?.italic
+      })
       if (enterElement?.value === ZERO) {
         enterElement.italic = !enterElement.italic
       } else {
-        this.range.setDefaultStyle({
-          italic: enterElement.italic
-            ? false
-            : !this.range.getDefaultStyle()?.italic
-        })
         isSubmitHistory = false
       }
       this.draw.render({
@@ -654,14 +656,14 @@ export class CommandAdapt {
       const { endIndex } = this.range.getRange()
       const elementList = this.draw.getElementList()
       const enterElement = elementList[endIndex]
+      this.range.setDefaultStyle({
+        underline: enterElement?.underline
+          ? false
+          : !this.range.getDefaultStyle()?.underline
+      })
       if (enterElement?.value === ZERO) {
         enterElement.underline = !enterElement.underline
       } else {
-        this.range.setDefaultStyle({
-          underline: enterElement?.underline
-            ? false
-            : !this.range.getDefaultStyle()?.underline
-        })
         isSubmitHistory = false
       }
       this.draw.render({
@@ -693,14 +695,14 @@ export class CommandAdapt {
       const { endIndex } = this.range.getRange()
       const elementList = this.draw.getElementList()
       const enterElement = elementList[endIndex]
+      this.range.setDefaultStyle({
+        strikeout: enterElement.strikeout
+          ? false
+          : !this.range.getDefaultStyle()?.strikeout
+      })
       if (enterElement?.value === ZERO) {
         enterElement.strikeout = !enterElement.strikeout
       } else {
-        this.range.setDefaultStyle({
-          strikeout: enterElement.strikeout
-            ? false
-            : !this.range.getDefaultStyle()?.strikeout
-        })
         isSubmitHistory = false
       }
       this.draw.render({
@@ -799,6 +801,9 @@ export class CommandAdapt {
       const { endIndex } = this.range.getRange()
       const elementList = this.draw.getElementList()
       const enterElement = elementList[endIndex]
+      this.range.setDefaultStyle({
+        color: payload || undefined
+      })
       if (enterElement?.value === ZERO) {
         if (payload) {
           enterElement.color = payload
@@ -806,9 +811,6 @@ export class CommandAdapt {
           delete enterElement.color
         }
       } else {
-        this.range.setDefaultStyle({
-          color: payload || undefined
-        })
         isSubmitHistory = false
       }
       this.draw.render({
@@ -843,6 +845,9 @@ export class CommandAdapt {
       const { endIndex } = this.range.getRange()
       const elementList = this.draw.getElementList()
       const enterElement = elementList[endIndex]
+      this.range.setDefaultStyle({
+        highlight: payload || undefined
+      })
       if (enterElement?.value === ZERO) {
         if (payload) {
           enterElement.highlight = payload
@@ -850,9 +855,6 @@ export class CommandAdapt {
           delete enterElement.highlight
         }
       } else {
-        this.range.setDefaultStyle({
-          highlight: payload || undefined
-        })
         isSubmitHistory = false
       }
       this.draw.render({
@@ -2621,6 +2623,10 @@ export class CommandAdapt {
 
   public insertArea(payload: IInsertAreaOption) {
     return this.draw.getArea().insertArea(payload)
+  }
+
+  public setAreaValue(payload: ISetAreaValueOption) {
+    return this.draw.getArea().setAreaValue(payload)
   }
 
   public setAreaProperties(payload: ISetAreaPropertiesOption) {

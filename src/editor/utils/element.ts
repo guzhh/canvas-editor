@@ -217,6 +217,14 @@ export function formatElementList(
               isHandleFirstElement: true,
               isForceCompensation: true
             })
+            // 首字符字体大小默认使用首个字符元素字体大小
+            if (
+              !td.value[0].size &&
+              td.value[1]?.size &&
+              isTextLikeElement(td.value[1])
+            ) {
+              td.value[0].size = td.value[1].size
+            }
             for (let v = 0; v < td.value.length; v++) {
               const value = td.value[v]
               value.tdId = tdId
@@ -1604,11 +1612,12 @@ export function getElementListByHTML(
           const colElements = tableElement.querySelectorAll('colgroup col')
           // 基础数据
           tableElement.querySelectorAll('tr').forEach(trElement => {
-            const trHeightStr = window
-              .getComputedStyle(trElement)
-              .height.replace('px', '')
+            const trHeightStr = Number(
+              window.getComputedStyle(trElement).height.replace('px', '')
+            )
             const tr: ITr = {
-              height: Number(trHeightStr),
+              height: trHeightStr,
+              minHeight: trHeightStr,
               tdList: []
             }
             trElement.querySelectorAll('th,td').forEach(tdElement => {
@@ -1672,8 +1681,12 @@ export function getElementListByHTML(
         } else {
           findTextNode(node)
           if (node.nodeType === 1 && n !== childNodes.length - 1) {
-            const display = window.getComputedStyle(node as Element).display
-            if (display === 'block') {
+            const nodeElement = node as Element
+            const display = window.getComputedStyle(nodeElement).display
+            if (
+              display === 'block' &&
+              !/(\n|\r\n)$/.test(nodeElement.textContent!)
+            ) {
               elementList.push({
                 value: '\n'
               })
