@@ -35,7 +35,7 @@ export function input(data: string, host: CanvasEvent) {
     cursor.clearAgentDomValue() // 清除光标代理dom值
   }
   const { TEXT, HYPERLINK, SUBSCRIPT, SUPERSCRIPT, DATE, TAB } = ElementType
-  
+
   // 4. 文本分割和元素创建
   const text = data.replaceAll(`\n`, ZERO)
   const { startIndex, endIndex } = rangeManager.getRange()
@@ -53,8 +53,7 @@ export function input(data: string, host: CanvasEvent) {
       (!copyElement.title?.disabled && !copyElement.control?.disabled)
     ) {
       const nextElement = elementList[endIndex + 1]
-      console.log('copyElement', copyElement, nextElement)
-      
+
       // 文本、超链接、日期、上下标：复制所有信息（元素类型、样式、特殊属性）
       if (
         !copyElement.type ||
@@ -96,7 +95,7 @@ export function input(data: string, host: CanvasEvent) {
   // 控件-移除placeholder
   const control = draw.getControl()
   let curIndex: number
-  
+
   if (control.getActiveControl() && control.getIsRangeWithinControl()) {
     curIndex = control.setValue(inputData)
     if (!isComposing) {

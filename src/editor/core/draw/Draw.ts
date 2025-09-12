@@ -271,11 +271,11 @@ export class Draw {
   ) {
     // 创建编辑器容器
     this.container = this._wrapContainer(rootContainer)
-    this.pageList = []
-    this.ctxList = []
-    this.pageNo = 0
-    this.renderCount = 0
-    this.pagePixelRatio = null
+    this.pageList = [] // 编辑器纸张列表
+    this.ctxList = [] // 编辑器纸张上下文列表
+    this.pageNo = 0 // 当前页编号
+    this.renderCount = 0 // 渲染次数
+    this.pagePixelRatio = null // 纸张像素比
     this.mode = options.mode
     this.options = options
     this.elementList = data.main
@@ -496,9 +496,12 @@ export class Draw {
     return pageHeight - this.getMainOuterHeight()
   }
 
+  // 获取非正文的高度
   public getMainOuterHeight(): number {
     const margins = this.getMargins()
+    // 获取页眉去除页面上边距后的高度, 即页眉超出页面上边距的高度
     const headerExtraHeight = this.header.getExtraHeight()
+    // 获取页脚去除页面下边距后的高度，即页脚超出页面下边距的高度
     const footerExtraHeight = this.footer.getExtraHeight()
     return margins[0] + margins[2] + headerExtraHeight + footerExtraHeight
   }
@@ -927,9 +930,8 @@ export class Draw {
             // 3. 元素所属区域被隐藏
             deleteElement?.area?.hide ||
             // 4. 同时满足以下所有删除条件
-            (
-              // 表格单元格可删除标记不为 false
-              tdDeletable !== false &&
+            // 表格单元格可删除标记不为 false
+            (tdDeletable !== false &&
               // 元素所属控件可删除标记不为 false
               deleteElement?.control?.deletable !== false &&
               // 满足以下任一条件：
@@ -951,8 +953,7 @@ export class Draw {
               // - 元素所属区域可删除标记不为 false
               // - 元素的区域索引不为 0
               (deleteElement?.area?.deletable !== false ||
-                deleteElement?.areaIndex !== 0)
-            )
+                deleteElement?.areaIndex !== 0))
           ) {
             // 从元素列表中删除当前元素
             elementList.splice(deleteIndex, 1)
@@ -1418,10 +1419,12 @@ export class Draw {
     this.ctxList.push(ctx)
   }
 
+  // 初始化页面画布上下文
   private _initPageContext(ctx: CanvasRenderingContext2D) {
     const dpr = this.getPagePixelRatio()
     ctx.scale(dpr, dpr)
     // 重置以下属性是因部分浏览器(chrome)会应用css样式
+    ctx.textRendering = 'optimizeLegibility'
     ctx.letterSpacing = '0px'
     ctx.wordSpacing = '0px'
     ctx.direction = 'ltr'
@@ -1461,12 +1464,13 @@ export class Draw {
       surroundElementList = []
     } = payload
     const {
-      defaultSize,
-      defaultRowMargin,
-      scale,
-      table: { tdPadding, defaultTrMinHeight },
-      defaultTabWidth
+      defaultSize, // 默认字号
+      defaultRowMargin, // 默认行间距,如 1 倍行距，2 倍行距
+      scale, // 页面缩放比例
+      table: { tdPadding, defaultTrMinHeight }, // 单元格内边距、默认表格行最小高度
+      defaultTabWidth // 默认tab宽度
     } = this.options
+    // 获取默认行高
     const defaultBasicRowMarginHeight = this.getDefaultBasicRowMarginHeight()
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
@@ -1481,6 +1485,7 @@ export class Draw {
         elementList: [],
         startIndex: 0,
         rowIndex: 0,
+        // 行对齐方式，如左对齐、右对齐、居中对齐
         rowFlex: elementList?.[0]?.rowFlex || elementList?.[1]?.rowFlex
       })
     }
@@ -1494,9 +1499,9 @@ export class Draw {
     // 控件最小宽度
     let controlRealWidth = 0
     for (let i = 0; i < elementList.length; i++) {
-      const curRow: IRow = rowList[rowList.length - 1]
-      const element = elementList[i]
-      const rowMargin =
+      const curRow: IRow = rowList[rowList.length - 1] // 拿到当前行
+      const element = elementList[i] // 当前元素
+      const rowMargin = // 拿到实际行间距
         defaultBasicRowMarginHeight * (element.rowMargin ?? defaultRowMargin)
       const metrics: IElementMetrics = {
         width: 0,
@@ -1504,11 +1509,12 @@ export class Draw {
         boundingBoxAscent: 0,
         boundingBoxDescent: 0
       }
-      // 实际可用宽度
+      // 偏移的宽度
       const offsetX =
         curRow.offsetX ||
         (element.listId && listStyleMap.get(element.listId)) ||
         0
+      // 实际可用宽度
       const availableWidth = innerWidth - offsetX
       // 增加起始位置坐标偏移量
       const isStartElement = curRow.elementList.length === 1
@@ -1518,6 +1524,7 @@ export class Draw {
         (element.hide || element.control?.hide || element.area?.hide) &&
         !this.isDesignMode()
       ) {
+        // 当前元素被隐藏,则那上一个元素的测量信息进行填充
         const preElement = curRow.elementList[curRow.elementList.length - 1]
         metrics.height =
           preElement?.metrics.height || this.options.defaultSize * scale
@@ -1562,13 +1569,16 @@ export class Draw {
         // 表格分页处理进度：https://github.com/Hufe921/canvas-editor/issues/41
         // 查看后续表格是否属于同一个源表格-存在即合并
         if (element.pagingId) {
+          // 判断该表格是否是一个被拆分的表格
+          // 如果是则查找下一个元素，并判断是否属于同一个源表格
           let tableIndex = i + 1
           let combineCount = 0
           while (tableIndex < elementList.length) {
-            const nextElement = elementList[tableIndex]
+            const nextElement = elementList[tableIndex] // 拿到下一个元素
             if (nextElement.pagingId === element.pagingId) {
+              // 判断是否属于同一个源表格
               const nexTrList = nextElement.trList!.filter(
-                tr => !tr.pagingRepeat
+                tr => !tr.pagingRepeat // 将标题行过滤掉
               )
               element.trList!.push(...nexTrList)
               element.height! += nextElement.height!
@@ -1579,6 +1589,7 @@ export class Draw {
             }
           }
           if (combineCount) {
+            // 删除被合并的表格
             elementList.splice(i + 1, combineCount)
           }
         }
@@ -1597,21 +1608,23 @@ export class Draw {
           const tr = trList[t]
           for (let d = 0; d < tr.tdList.length; d++) {
             const td = tr.tdList[d]
+            // 计算表格单元格内具体的行信息
             const rowList = this.computeRowList({
               innerWidth: (td.width! - tdPaddingWidth) * scale,
               elementList: td.value,
               isFromTable: true,
               isPagingMode
             })
+            // 计算出单元格内容的高度
             const rowHeight = rowList.reduce((pre, cur) => pre + cur.height, 0)
             td.rowList = rowList
-            // 移除缩放导致的行高变化-渲染时会进行缩放调整
+            // 移除缩放导致的行高变化-渲染时会进行缩放调整，即拿到单元格内容的实际高度
             const curTdHeight = rowHeight / scale + tdPaddingHeight
             // 内容高度大于当前单元格高度需增加
             if (td.height! < curTdHeight) {
-              const extraHeight = curTdHeight - td.height!
-              const changeTr = trList[t + td.rowspan - 1]
-              changeTr.height += extraHeight
+              const extraHeight = curTdHeight - td.height! // 计算出单元格需要增加的高度
+              const changeTr = trList[t + td.rowspan - 1] // 由于单元格存在跨行，所以具体要调整的元素为单元格所在的最后一行的单元格
+              changeTr.height += extraHeight // 先将内容高度设置在单元格所在的最后一行
               changeTr.tdList.forEach(changeTd => {
                 changeTd.height! += extraHeight
                 if (!changeTd.realHeight) {
@@ -1622,9 +1635,10 @@ export class Draw {
               })
             }
             // 当前单元格最小高度及真实高度（包含跨列）
-            let curTdMinHeight = 0
-            let curTdRealHeight = 0
+            let curTdMinHeight = 0 // 计算当前跨行单元格的最小高度
+            let curTdRealHeight = 0 // 计算当前跨行单元格真实高度
             let i = 0
+            // 计算出合并行累计的高度
             while (i < td.rowspan) {
               const curTr = trList[i + t] || trList[t]
               curTdMinHeight += curTr.minHeight!
@@ -1636,28 +1650,40 @@ export class Draw {
             td.mainHeight = curTdHeight
           }
         }
-        // 单元格高度大于实际内容高度需减少
+        // 当单元格高度大于实际内容高度时，需要对单元格高度进行缩减
+        // 调用 tableParticle 的 getTrListGroupByCol 方法，重新组织表格的行列数据
+        // 该方法会将跨行的单元格移动到其所属的最后一行，方便后续处理
         const reduceTrList = this.tableParticle.getTrListGroupByCol(trList)
+        // 遍历重新组织后的行列表
         for (let t = 0; t < reduceTrList.length; t++) {
           const tr = reduceTrList[t]
-          let reduceHeight = -1
+          let reduceHeight = -1 // 初始化可减少的高度为 -1，用于后续比较
+          // 遍历当前行的所有单元格
           for (let d = 0; d < tr.tdList.length; d++) {
             const td = tr.tdList[d]
-            const curTdRealHeight = td.realHeight!
-            const curTdHeight = td.mainHeight!
-            const curTdMinHeight = td.realMinHeight!
-            // 获取最大可减少高度
+            const curTdRealHeight = td.realHeight! // 获取单元格当前实际高度，包含跨行的累计高度
+            const curTdHeight = td.mainHeight! // 获取当前单元格内容的高度
+            const curTdMinHeight = td.realMinHeight! // 获取单元格最小高度，基于最小行高的累计值
+
+            // 计算当前单元格最大可减少的高度
+            // 如果单元格内容高度小于最小高度，则用实际高度减去最小高度
+            // 否则，用实际高度减去内容高度
             const curReduceHeight =
               curTdHeight < curTdMinHeight
                 ? curTdRealHeight - curTdMinHeight
                 : curTdRealHeight - curTdHeight
+
+            // 如果 reduceHeight 仍为初始值 -1，或者当前可减少高度小于 reduceHeight
             if (!~reduceHeight || curReduceHeight < reduceHeight) {
-              reduceHeight = curReduceHeight
+              reduceHeight = curReduceHeight // 更新 reduceHeight 为当前可减少高度
             }
           }
+
+          // 如果可减少的高度大于 0，则执行高度缩减操作
           if (reduceHeight > 0) {
-            const changeTr = trList[t]
-            changeTr.height -= reduceHeight
+            const changeTr = trList[t] // 获取原始行列表中对应的行
+            changeTr.height -= reduceHeight // 减少该行的高度
+            // 遍历该行的所有单元格，同步减少每个单元格的高度和实际高度
             changeTr.tdList.forEach(changeTd => {
               changeTd.height! -= reduceHeight
               changeTd.realHeight! -= reduceHeight
@@ -1685,7 +1711,7 @@ export class Draw {
         if (isPagingMode) {
           const height = this.getHeight()
           const marginHeight = this.getMainOuterHeight()
-          let curPagePreHeight = marginHeight
+          let curPagePreHeight = marginHeight //
           for (let r = 0; r < rowList.length; r++) {
             const row = rowList[r]
             const rowOffsetY = row.offsetY || 0
@@ -2805,8 +2831,8 @@ export class Draw {
       isFirstRender = false
     } = payload || {}
     let { curIndex } = payload || {}
-    const innerWidth = this.getInnerWidth()
-    const isPagingMode = this.getIsPagingMode()
+    const innerWidth = this.getInnerWidth() // 拿到纸张实际可用宽度
+    const isPagingMode = this.getIsPagingMode() // 拿到页面模式，是连页还是分页
     // 缓存当前页数信息
     const oldPageSize = this.pageRowList.length
     // 计算文档信息
@@ -2824,13 +2850,15 @@ export class Draw {
         }
       }
       // 行信息
-      const margins = this.getMargins()
-      const pageHeight = this.getHeight()
-      const extraHeight = this.header.getExtraHeight()
-      const mainOuterHeight = this.getMainOuterHeight()
-      const startX = margins[3]
-      const startY = margins[0] + extraHeight
+      const margins = this.getMargins() // 获取页面外边距
+      const pageHeight = this.getHeight() // 获取页面实际高度
+      const extraHeight = this.header.getExtraHeight() // 获取
+      const mainOuterHeight = this.getMainOuterHeight() // 获取非正文区域高度
+      const startX = margins[3] // 拿到正文区域的起始 X 坐标
+      const startY = margins[0] + extraHeight // 拿到正文区域的起始 Y 坐标
+      // 拿到环绕展示的元素
       const surroundElementList = pickSurroundElementList(this.elementList)
+      // 计算出行信息
       this.rowList = this.computeRowList({
         startX,
         startY,
@@ -2950,7 +2978,6 @@ export class Draw {
         curIndex = tablePositionList.length - 1
       }
       const tablePosition = tablePositionList?.[curIndex!]
-      console.info(tablePosition, '🚀 ~ file:Draw.ts line:2909 tablePosition')
       this.position.setCursorPosition(tablePosition || null)
     } else {
       this.position.setCursorPosition(
@@ -2973,10 +3000,28 @@ export class Draw {
       }
     }
     // todo: 控件绘制边框
-    // if (positionContext.isControl){
-    //   const { index } = positionContext
-    //   const elementList = this.getOriginalElementList()
-    //   console.info(elementList[index!], '🚀 ~ file:Draw.ts line:2935 elementList[index!]')
+    // if (positionContext.isControl && curIndex !== undefined) {
+    //   const elementList = this.getElementList()
+    //   const element = elementList[curIndex]
+    //   if (element.controlId) {
+    //     // 查找整个控件的所有元素
+    //     let startIndex = curIndex
+    //     let endIndex = curIndex
+    //     // 向前查找控件起始位置
+    //     while (
+    //       startIndex > 0 &&
+    //       elementList[startIndex - 1]?.controlId === element.controlId
+    //     ) {
+    //       startIndex--
+    //     }
+    //     // 向后查找控件结束位置
+    //     while (
+    //       endIndex < elementList.length - 1 &&
+    //       elementList[endIndex + 1]?.controlId === element.controlId
+    //     ) {
+    //       endIndex++
+    //     }
+    //   }
     // }
     this.cursor.drawCursor({
       isShow: isShowCursor

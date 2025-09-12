@@ -29,6 +29,10 @@ export class TableParticle {
     this.options = draw.getOptions()
   }
 
+  /**
+   * 重新组织表格行列表，将跨行的单元格其所属的最后一行中
+   * @param payload
+   */
   public getTrListGroupByCol(payload: ITr[]): ITr[] {
     const trList = deepClone(payload)
     for (let t = 0; t < payload.length; t++) {

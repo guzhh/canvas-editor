@@ -78,7 +78,7 @@ import { version as EDITOR_VERSION } from '../../package.json'
 import { DataImageType } from './dataset/enum/DataImage'
 
 export default class Editor {
-  public command: Command 
+  public command: Command
   public listener: Listener
   public eventBus: EventBus<EventBusMap>
   public override: Override
@@ -114,7 +114,7 @@ export default class Editor {
     pageComponentData.forEach(elementList => {
       formatElementList(elementList, {
         editorOptions,
-        isForceCompensation: true
+        isForceCompensation: true // 强制在元素开头添加一个不显示的字符，保证后续的处理逻辑正常
       })
     })
     // 监听

@@ -74,7 +74,8 @@ export class GlobalEvent {
     if (!this.cursor) return
     // 编辑器内部dom
     const target = <Element>(evt?.composedPath()[0] || evt.target)
-    const pageList = this.draw.getPageList()
+    const pageList = this.draw.getPageList() // 拿到所有纸张
+    // 判断操作的是否是编辑器内部dom
     const innerEditorDom = findParent(
       target,
       (node: any) => pageList.includes(node),
@@ -85,9 +86,11 @@ export class GlobalEvent {
     const outerEditorDom = findParent(
       target,
       (node: Node & Element) =>
+        // 判断节点存在并且是元素节点，并且是编辑器组件
         !!node && node.nodeType === 1 && !!node.getAttribute(EDITOR_COMPONENT),
       true
     )
+    // 如果点击的不是编辑器外部组件dom
     if (outerEditorDom) {
       this.watchCursorActive()
       return
@@ -107,12 +110,18 @@ export class GlobalEvent {
     this.canvasEvent.setIsAllowSelection(false)
   }
 
+  /**
+   * 监听光标激活状态
+   * 当选区闭合且实际光标移出光标代理时，将模拟光标设置为失活显示状态
+   */
   public watchCursorActive() {
-    // 选区闭合&实际光标移出光标代理
+    // 存在选区时，不处理
     if (!this.range.getIsCollapsed()) return
+    // 使用 setTimeout 异步执行，确保当前操作完成后再处理光标状态
     setTimeout(() => {
       // 将模拟光标变成失活显示状态
       if (!this.cursor?.getAgentIsActive()) {
+        // 绘制失活状态的光标，不显示焦点且不闪烁
         this.cursor?.drawCursor({
           isFocus: false,
           isBlink: false

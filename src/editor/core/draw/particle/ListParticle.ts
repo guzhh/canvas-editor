@@ -98,32 +98,51 @@ export class ListParticle {
     this.draw.render({ curIndex, isSetCursor })
   }
 
+  /**
+   * 计算列表样式的宽度
+   * @param ctx - Canvas 2D 渲染上下文
+   * @param elementList - 元素列表
+   * @returns 返回一个 Map，键为列表 ID，值为对应列表样式的宽度
+   */
   public computeListStyle(
     ctx: CanvasRenderingContext2D,
     elementList: IElement[]
   ): Map<string, number> {
+    // 用于存储列表 ID 和对应列表样式宽度的映射
     const listStyleMap = new Map<string, number>()
+    // 当前遍历的起始索引
     let start = 0
-    let curListId = elementList[start].listId
+    // 当前处理的列表 ID
+    let curListId = elementList[start]?.listId
+    // 当前列表的元素集合
     let curElementList: IElement[] = []
+    // 元素列表的长度
     const elementLength = elementList.length
+    // 遍历元素列表
     while (start < elementLength) {
+      // 获取当前元素
       const curElement = elementList[start]
+      // 如果当前元素属于当前处理的列表，则将其添加到当前列表元素集合中
       if (curListId && curListId === curElement.listId) {
         curElementList.push(curElement)
       } else {
+        // 如果当前元素有列表 ID 且与当前处理的列表 ID 不同，说明当前列表结束
         if (curElement.listId && curElement.listId !== curListId) {
-          // 列表结束
+          // 列表结束，计算当前列表样式的宽度并存储到映射中
           if (curElementList.length) {
             const width = this.getListStyleWidth(ctx, curElementList)
             listStyleMap.set(curListId!, width)
           }
+          // 更新当前处理的列表 ID
           curListId = curElement.listId
+          // 初始化新列表的元素集合
           curElementList = curListId ? [curElement] : []
         }
       }
+      // 移动到下一个元素
       start++
     }
+    // 处理最后一个列表的样式宽度
     if (curElementList.length) {
       const width = this.getListStyleWidth(ctx, curElementList)
       listStyleMap.set(curListId!, width)

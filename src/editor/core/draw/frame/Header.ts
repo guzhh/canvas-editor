@@ -108,7 +108,7 @@ export class Header {
 
   public getHeight(): number {
     const maxHeight = this.getMaxHeight()
-    const rowHeight = this.getRowHeight()
+    const rowHeight = this.getRowHeight() // 获取页眉所有行累计的高度
     return rowHeight > maxHeight ? maxHeight : rowHeight
   }
 
@@ -116,12 +116,22 @@ export class Header {
     return this.rowList.reduce((pre, cur) => pre + cur.height, 0)
   }
 
+  /**
+   * 获取页眉的额外高度
+   * 计算逻辑为：页眉上边距 + 实际高 - 页面上边距
+   * 如果计算结果小于等于 0，则返回 0
+   * @returns 页眉的额外高度
+   */
   public getExtraHeight(): number {
-    // 页眉上边距 + 实际高 - 页面上边距
+    // 获取页面边距，margins[0] 表示页面上边距
     const margins = this.draw.getMargins()
+    // 获取页眉内容的实际高度
     const headerHeight = this.getHeight()
+    // 获取页眉的上边距
     const headerTop = this.getHeaderTop()
+    // 计算页眉的额外高度（这样计算的原因再有 页面上下边距不控制页眉页脚，只控制正文）
     const extraHeight = headerTop + headerHeight - margins[0]
+    // 如果额外高度小于等于 0，则返回 0，否则返回计算结果
     return extraHeight <= 0 ? 0 : extraHeight
   }
 

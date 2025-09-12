@@ -1814,11 +1814,18 @@ export function replaceHTMLElementTag(
   return newDom
 }
 
+/**
+ * 从元素列表中筛选出图片显示方式为环绕的元素
+ * @param elementList - 元素列表，包含多个 IElement 类型的元素
+ * @returns 返回一个新的数组，包含所有图片显示方式为环绕的元素
+ */
 export function pickSurroundElementList(elementList: IElement[]) {
+  // 用于存储图片显示方式为环绕的元素
   const surroundElementList = []
   for (let e = 0; e < elementList.length; e++) {
     const element = elementList[e]
     if (element.imgDisplay === ImageDisplay.SURROUND) {
+      // 如果是环绕显示，则将该元素添加到结果数组中
       surroundElementList.push(element)
     }
   }

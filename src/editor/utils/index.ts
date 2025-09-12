@@ -78,20 +78,34 @@ export function isBody(node: Element): boolean {
   return node && node.nodeType === 1 && node.tagName.toLowerCase() === 'body'
 }
 
+/**
+ * 在 DOM 树中向上查找满足过滤条件的父节点
+ * @param node - 起始查找的节点
+ * @param filterFn - 过滤函数，用于判断节点是否符合条件
+ * @param includeSelf - 是否将起始节点本身也纳入检查范围
+ * @returns 返回满足条件的父节点，如果未找到则返回 null
+ */
 export function findParent(
   node: Element,
   filterFn: Function,
   includeSelf: boolean
 ) {
+  // 检查起始节点是否存在且不是 body 节点
   if (node && !isBody(node)) {
+    // 根据 includeSelf 参数决定从起始节点本身还是其父节点开始查找
     node = includeSelf ? node : (node.parentNode as Element)
+    // 循环向上查找父节点
     while (node) {
+      // 如果没有过滤函数，或者当前节点满足过滤条件，或者当前节点是 body 节点
       if (!filterFn || filterFn(node) || isBody(node)) {
+        // 如果存在过滤函数且当前节点不满足过滤条件但为 body 节点，返回 null，否则返回当前节点
         return filterFn && !filterFn(node) && isBody(node) ? null : node
       }
+      // 继续向上查找父节点
       node = node.parentNode as Element
     }
   }
+  // 未找到满足条件的节点，返回 null
   return null
 }
 
