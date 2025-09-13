@@ -49,6 +49,8 @@ import {
 import { defaultBadgeOption } from '../dataset/constant/Badge'
 import { IBadgeOption } from '../interface/Badge'
 import { defaultModeRuleOption } from '../dataset/constant/Editor'
+import { IActivateBorderOption } from '../interface/activateBorder'
+import { defaultActivateBorderOption } from '../dataset/constant/ActivateBorder'
 
 export function mergeOption(
   options: IEditorOption = {}
@@ -128,6 +130,10 @@ export function mergeOption(
   const pageBorderOptions: Required<IPageBorderOption> = {
     ...defaultPageBorderOption,
     ...options.pageBorder
+  }
+  const activateBorderOptions: Required<IActivateBorderOption> = {
+    ...defaultActivateBorderOption,
+    ...options.activateBorder
   }
   const badgeOptions: Required<IBadgeOption> = {
     ...defaultBadgeOption,
@@ -213,6 +219,7 @@ export function mergeOption(
     separator: separatorOptions,
     lineNumber: lineNumberOptions,
     pageBorder: pageBorderOptions,
+    activateBorder: activateBorderOptions,
     badge: badgeOptions,
     modeRule: modeRuleOption
   }

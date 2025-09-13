@@ -36,7 +36,6 @@ import {
   deepClone,
   isArray,
   isString,
-  nextTick,
   omitObject,
   pickObject,
   splitText
@@ -70,7 +69,6 @@ import {
 import { IRowElement } from '../../../interface/Row'
 import { RowFlex } from '../../../dataset/enum/Row'
 import { ZERO } from '../../../dataset/constant/Common'
-import { EDITOR_PREFIX } from '../../../dataset/constant/Editor'
 
 interface IMoveCursorResult {
   newIndex: number
@@ -88,8 +86,6 @@ export class Control {
   private activeControl: IControlInstance | null
   private activeControlValue: IElement[]
   private preElement: IElement | null
-  private container: HTMLDivElement
-  private controlPopupContainer: HTMLDivElement // 控件弹窗提示容器
 
   constructor(draw: Draw) {
     this.controlBorder = new ControlBorder(draw)
@@ -98,7 +94,6 @@ export class Control {
     this.range = draw.getRange()
     this.listener = draw.getListener()
     this.eventBus = draw.getEventBus()
-    this.container = draw.getContainer()
     this.controlSearch = new ControlSearch(this)
 
     this.options = draw.getOptions()
@@ -106,54 +101,6 @@ export class Control {
     this.activeControl = null
     this.activeControlValue = []
     this.preElement = null
-    this.controlPopupContainer = this._createControlPopupContainer()
-  }
-
-  // 创建控件弹窗提示容器
-  private _createControlPopupContainer() {
-    const controlPopupContainer = document.createElement('div')
-    controlPopupContainer.classList.add(`${EDITOR_PREFIX}-control-tip-popup`)
-    this.container.append(controlPopupContainer)
-    return controlPopupContainer
-  }
-
-  // 渲染弹窗
-  public drawControlPopup() {
-    const positionList = this.draw.getPosition().getPositionList()
-    const elementList = this.draw.getElementList()
-    const { startIndex } = this.getRange()
-    const startElement = elementList[startIndex]
-    if (!startElement?.controlId) return
-    // 向前查找控件第一个元素
-    let start = startIndex
-    while (start >= 0) {
-      const preElement = elementList[start]
-      if (preElement.controlId !== startElement.controlId) break
-      start--
-    }
-    const {
-      coordinate: {
-        rightTop: [left, top]
-      },
-      pageNo
-    } = positionList[start]
-    const height = this.draw.getHeight() // 页面高度
-    const pageGap = this.draw.getPageGap() // 页面间距
-    const preY = pageNo * (height + pageGap) // 拿到页面顶部坐标
-    this.controlPopupContainer.innerHTML = `
-      <p>：${startElement.control?.label || startElement.control!.type}</p>
-    `
-    // this.controlPopupContainer.style.backgroundColor = '#fff'
-    // this.controlPopupContainer.style.border =`1px solid ${this.options.control.bracketColor}`
-    this.controlPopupContainer.style.display = 'block'
-    this.controlPopupContainer.style.left = `${left}px`
-    this.controlPopupContainer.style.top = `${
-      top + preY - this.controlPopupContainer.offsetHeight
-    }px`
-  }
-
-  public clearControlPopup() {
-    this.controlPopupContainer.style.display = 'none'
   }
 
   // 搜索高亮匹配
@@ -566,10 +513,6 @@ export class Control {
     if (element.controlComponent !== ControlComponent.POSTFIX) {
       this.emitControlChange(ControlState.ACTIVE)
     }
-    // 绘制悬浮提示
-    nextTick(() => {
-      this.drawControlPopup()
-    })
   }
 
   public destroyControl(options: IDestroyControlOption = {}) {
@@ -591,7 +534,6 @@ export class Control {
     // 清空变量
     this.preElement = null
     this.activeControl = null
-    this.clearControlPopup()
     this.activeControlValue = []
   }
 

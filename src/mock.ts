@@ -103,6 +103,8 @@ elementList.splice(12, 0, {
   type: ElementType.CONTROL,
   value: '',
   control: {
+    // border: true,
+    label: '其他补充',
     deletable: true,
     conceptId: '1',
     type: ControlType.TEXT,
@@ -506,5 +508,18 @@ export const options: IEditorOption = {
   zone: {
     tipDisabled: false
   },
-  maskMargin: [60, 0, 30, 0] // 菜单栏高度60，底部工具栏30为遮盖层
+  maskMargin: [60, 0, 30, 0], // 菜单栏高度60，底部工具栏30为遮盖层
+  // 控件信息配置
+  control: {
+    placeholderColor: '#9c9b9b',
+    bracketColor: '#1772F6',
+    prefix: '[',
+    postfix: ']',
+    borderWidth: 1,
+    borderColor: '#99C6FF',
+    // activeBackgroundColor: '#CAEACE',
+    disabledBackgroundColor: '#f3faba',
+    // existValueBackgroundColor: "#bbd8fc",
+    noValueBackgroundColor: '#C7EDCC'
+  }
 }

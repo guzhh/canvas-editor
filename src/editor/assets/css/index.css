@@ -1,5 +1,5 @@
 @import './control/select.css';
-@import './control/tip.css';
+@import './popup/index.css';
 @import './date/datePicker.css';
 @import './block/block.css';
 @import './table/table.css';

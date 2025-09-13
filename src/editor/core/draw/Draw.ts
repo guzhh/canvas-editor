@@ -42,6 +42,7 @@ import { Margin } from './frame/Margin'
 import { Search } from './interactive/Search'
 import { Strikeout } from './richtext/Strikeout'
 import { Underline } from './richtext/Underline'
+import { BorderParticle } from './particle/BorderParticle'
 import { ElementType } from '../../dataset/enum/Element'
 import { ImageParticle } from './particle/ImageParticle'
 import { LaTexParticle } from './particle/latex/LaTexParticle'
@@ -227,6 +228,8 @@ export class Draw {
   private listParticle: ListParticle
   // 换行符元素实例,用于绘制换行符元素
   private lineBreakParticle: LineBreakParticle
+  // 绘制元素边框
+  private borderParticle: BorderParticle
   // 控件元素实例,用于绘制控件元素
   private control: Control
   // 页面边框实例,用于绘制页面边框
@@ -299,6 +302,8 @@ export class Draw {
     this.group = new Group(this)
     this.area = new Area(this)
     this.underline = new Underline(this)
+    // 绘制元素边框
+    this.borderParticle = new BorderParticle(this)
     this.strikeout = new Strikeout(this)
     this.highlight = new Highlight(this)
     this.previewer = new Previewer(this)
@@ -721,6 +726,10 @@ export class Draw {
 
   public getTextParticle(): TextParticle {
     return this.textParticle
+  }
+
+  public getBorderParticle(): BorderParticle {
+    return this.borderParticle
   }
 
   public getHeaderElementList(): IElement[] {
@@ -2777,6 +2786,8 @@ export class Draw {
     }
     // 绘制签章
     this.badge.render(ctx, pageNo)
+    // 绘制边框
+    this.borderParticle.render(ctx, pageNo)
   }
 
   private _disconnectLazyRender() {
@@ -2888,6 +2899,7 @@ export class Draw {
     // 清除光标等副作用
     this.imageObserver.clearAll()
     this.cursor.recoveryCursor()
+    this.borderParticle.clearElementPositions()
     // 创建纸张
     for (let i = 0; i < this.pageRowList.length; i++) {
       if (!this.pageList[i]) {
@@ -2918,6 +2930,8 @@ export class Draw {
       // 存在选区时仅定位避免事件无法捕获
       this.cursor.focus()
     }
+    // 控件绘制边框
+    this.borderParticle.calculateElementPositions()
     // 历史记录用于undo、redo（非首次渲染内容变更 || 第一次存在光标时）
     if (
       (isSubmitHistory && !isFirstRender) ||
@@ -2999,30 +3013,6 @@ export class Draw {
         this.previewer.updateResizer(element, position)
       }
     }
-    // todo: 控件绘制边框
-    // if (positionContext.isControl && curIndex !== undefined) {
-    //   const elementList = this.getElementList()
-    //   const element = elementList[curIndex]
-    //   if (element.controlId) {
-    //     // 查找整个控件的所有元素
-    //     let startIndex = curIndex
-    //     let endIndex = curIndex
-    //     // 向前查找控件起始位置
-    //     while (
-    //       startIndex > 0 &&
-    //       elementList[startIndex - 1]?.controlId === element.controlId
-    //     ) {
-    //       startIndex--
-    //     }
-    //     // 向后查找控件结束位置
-    //     while (
-    //       endIndex < elementList.length - 1 &&
-    //       elementList[endIndex + 1]?.controlId === element.controlId
-    //     ) {
-    //       endIndex++
-    //     }
-    //   }
-    // }
     this.cursor.drawCursor({
       isShow: isShowCursor
     })

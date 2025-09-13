@@ -1,0 +1,9 @@
+.ce-border-tip-popup {
+  box-shadow: 0 2px 12px 0 rgb(98 107 132 / 20%);
+  border-radius: 2px;
+  padding: 2px 4px;
+  position: absolute;
+  z-index: 1;
+  display: none;
+  font-size: 14px;
+}

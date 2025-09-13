@@ -29,6 +29,7 @@ import { IBadgeOption } from './Badge'
 import { IElement } from './Element'
 import { LocationPosition } from '../dataset/enum/Common'
 import { IRange } from './Range'
+import { IActivateBorderOption } from './activateBorder'
 
 export interface IEditorData {
   header?: IElement[]
@@ -101,6 +102,7 @@ export interface IEditorOption {
   lineNumber?: ILineNumberOption
   pageBorder?: IPageBorderOption
   badge?: IBadgeOption
+  activateBorder?: IActivateBorderOption
   modeRule?: IModeRule
 }
 
