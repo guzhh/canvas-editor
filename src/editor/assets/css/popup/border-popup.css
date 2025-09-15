@@ -6,4 +6,19 @@
   z-index: 1;
   display: none;
   font-size: 14px;
+  padding: 4px 8px 4px 18px; /* 上 右 下 左 */
+}
+
+.ce-border-tip-popup::before {
+  content: '';
+  position: absolute;
+  left: 6px; /* 距离容器左边的距离 */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 4px;
+  background-color: var(--dot-color, #007bff); /* 圆点颜色 */
+  border-radius: 50%;
+  box-shadow: 0 6px 0 var(--dot-color, #007bff),
+    /* 第二个圆点，向下偏移 */ 0 -6px 0 var(--dot-color, #007bff); /* 第三个圆点，向上偏移 */
 }

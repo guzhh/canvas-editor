@@ -31,6 +31,7 @@ export class BorderParticle {
     popupContainer.style.border = `1px solid ${this.options.activateBorder.borderColor}`
     popupContainer.style.color = this.options.activateBorder.color!
     popupContainer.style.backgroundColor = this.options.activateBorder.popupColor!
+    popupContainer.style.setProperty('--dot-color', this.options.activateBorder.borderColor!)
     this.container.append(popupContainer)
     return popupContainer
   }
@@ -57,17 +58,17 @@ export class BorderParticle {
       if (element.control?.label) {
         this.borderPopupContainer.appendChild(
           Object.assign(document.createElement('p'), {
-            textContent: `标签：${element.control?.label}`
+            textContent: `${element.control?.label}`
           })
         )
       }
-      if (element.control?.placeholder) {
-        this.borderPopupContainer.appendChild(
-          Object.assign(document.createElement('p'), {
-            textContent: `提示：${element.control?.placeholder}`
-          })
-        )
-      }
+      // if (element.control?.placeholder) {
+      //   this.borderPopupContainer.appendChild(
+      //     Object.assign(document.createElement('p'), {
+      //       textContent: `提示：${element.control?.placeholder}`
+      //     })
+      //   )
+      // }
       if (this.borderPopupContainer.children.length > 0) {
         this.borderPopupContainer.style.display = 'block'
         this.borderPopupContainer.style.left = `${left}px`
