@@ -105,30 +105,28 @@ export class Position {
     this.floatPositionList = payload
   }
 
+  // 计算页面类行的位置
   public computePageRowPosition(
     payload: IComputePageRowPositionPayload
   ): IComputePageRowPositionResult {
     const {
-      positionList,
-      rowList,
-      pageNo,
-      startX,
-      startY,
-      startRowIndex,
-      startIndex,
-      innerWidth,
+      positionList, // 所有元素的位置信息, 用于存储当前方法计算后的元素位置信息
+      rowList, // 当前页面所有行
+      pageNo, // 当前页码
+      startX,  // 当前页面起始X坐标
+      startY, // 当前页面起始Y坐标
+      startRowIndex, // 当前页面第一行位于所有行中的索引
+      startIndex, // 当前页面第一个元素位于所有元素中的索引
+      innerWidth, // 页面可用宽度
       zone
     } = payload
-    const {
-      scale,
-      table: { tdPadding }
-    } = this.options
+    const { scale, table: { tdPadding } } = this.options // 拿到缩放比例和表格内单元格间距
     let x = startX
     let y = startY
     let index = startIndex
     for (let i = 0; i < rowList.length; i++) {
       const curRow = rowList[i]
-      // 行存在环绕的可能性均不设置行布局
+      // 行存在环绕的可能性均不设置行布局，即【当行内存在图片，并且展示方式为（四周型环绕）时，不设置行的对齐方式，只能左对齐】
       if (!curRow.isSurround) {
         // 计算行偏移量（行居中、居右）
         const curRowWidth = curRow.width + (curRow.offsetX || 0)
@@ -147,17 +145,25 @@ export class Position {
       for (let j = 0; j < curRow.elementList.length; j++) {
         const element = curRow.elementList[j]
         const metrics = element.metrics
-        const offsetY =
+        let offsetY =
           !element.hide &&
           ((element.imgDisplay !== ImageDisplay.INLINE &&
               (element.type === ElementType.IMAGE || element.type === ElementType.DATA_IMAGE)) ||
             element.type === ElementType.LATEX)
-          // 数据图片元素
+            // 数据图片元素
             ? curRow.ascent - metrics.height
             : curRow.ascent
         // 偏移量
         if (element.left) {
           x += element.left
+        }
+        // TODO 垂直居中相关计算，默认计算出来的是底部对齐的
+        // 当设置为顶部对齐时，则需要减去行高度 加上 元素高度
+        if (curRow.verticalAlign === VerticalAlign.TOP) {
+          offsetY = offsetY - curRow.ascent + (element.metrics.height)
+        }else if (curRow.verticalAlign === VerticalAlign.MIDDLE){
+          // 设置居中对齐时，这需要减去 行高和元素高度差的一半
+          offsetY = offsetY - (curRow.ascent - element.metrics.height) / 2
         }
         const positionItem: IElementPosition = {
           pageNo,
@@ -284,27 +290,27 @@ export class Position {
     // 置空原位置信息
     this.positionList = []
     // 按每页行计算
-    const innerWidth = this.draw.getInnerWidth()
-    const pageRowList = this.draw.getPageRowList()
-    const margins = this.draw.getMargins()
-    const startX = margins[3]
+    const innerWidth = this.draw.getInnerWidth() // 拿到页面可用宽度
+    const pageRowList = this.draw.getPageRowList()  // 拿到每页的行信息
+    const margins = this.draw.getMargins() // 拿到页边距
+    const startX = margins[3] // 页边距-左边距,即元素起始的X坐标
     // 起始位置受页眉影响
     const header = this.draw.getHeader()
     const extraHeight = header.getExtraHeight()
-    const startY = margins[0] + extraHeight
+    const startY = margins[0] + extraHeight // 计算出元素起始的Y坐标
     let startRowIndex = 0
     for (let i = 0; i < pageRowList.length; i++) {
-      const rowList = pageRowList[i]
-      const startIndex = rowList[0]?.startIndex
+      const rowList = pageRowList[i] // 拿到每页的所有行信息
+      const startIndex = rowList[0]?.startIndex // 拿到每页第一行第一个元素对应全部元素的索引
       this.computePageRowPosition({
-        positionList: this.positionList,
-        rowList,
-        pageNo: i,
-        startRowIndex,
-        startIndex,
-        startX,
-        startY,
-        innerWidth
+        positionList: this.positionList, // 缓存位置信息
+        rowList, // 要计算的行列表
+        pageNo: i, // 当前页码
+        startRowIndex, // 起始行索引
+        startIndex, // 起始元素索引
+        startX, // 当前页面起始X坐标
+        startY, // 当前页面起始Y坐标
+        innerWidth // 当前页面可用宽度
       })
       startRowIndex += rowList.length
     }

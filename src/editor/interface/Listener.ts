@@ -8,6 +8,7 @@ import { IEditorResult } from './Editor'
 import { IElement } from './Element'
 import { IPositionContext } from './Position'
 import { ITextDecoration } from './Text'
+import { VerticalAlign } from '../dataset/enum/VerticalAlign'
 
 export interface IRangeStyle {
   type: ElementType | null
@@ -23,6 +24,7 @@ export interface IRangeStyle {
   color: string | null
   highlight: string | null
   rowFlex: RowFlex | null
+  verticalAlign: VerticalAlign | null
   rowMargin: number
   dashArray: number[]
   level: TitleLevel | null

@@ -345,6 +345,18 @@ ul {
   background-image: url('./assets/images/justify.svg');
 }
 
+.menu-item__vertically-centered i {
+  background-image: url('./assets/images/vertical-align-middle.svg');
+}
+
+.menu-item__vertically-top i {
+  background-image: url('./assets/images/vertical-align-top.svg');
+}
+
+.menu-item__vertically-bottom i {
+  background-image: url('./assets/images/vertical-align-bottom.svg');
+}
+
 .menu-item__row-margin {
   position: relative;
 }

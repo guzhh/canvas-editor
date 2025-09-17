@@ -115,6 +115,7 @@ import { TableOperate } from './particle/table/TableOperate'
 import { Area } from './interactive/Area'
 import { Badge } from './frame/Badge'
 import { DataImageParticle } from './particle/data-image/DataImageParticle'
+// import { ReferenceLineParticle } from './particle/ReferenceLineParticle'
 
 export class Draw {
   // 编辑器的根容器
@@ -230,6 +231,8 @@ export class Draw {
   private lineBreakParticle: LineBreakParticle
   // 绘制元素边框
   private borderParticle: BorderParticle
+  // 参考线元素实例,用于绘制参考线元素
+  // private referenceLineParticle: ReferenceLineParticle
   // 控件元素实例,用于绘制控件元素
   private control: Control
   // 页面边框实例,用于绘制页面边框
@@ -332,6 +335,7 @@ export class Draw {
     this.blockParticle = new BlockParticle(this)
     this.listParticle = new ListParticle(this)
     this.lineBreakParticle = new LineBreakParticle(this)
+    // this.referenceLineParticle = new ReferenceLineParticle(this)
     this.control = new Control(this)
     this.pageBorder = new PageBorder(this)
 
@@ -1495,7 +1499,9 @@ export class Draw {
         startIndex: 0,
         rowIndex: 0,
         // 行对齐方式，如左对齐、右对齐、居中对齐
-        rowFlex: elementList?.[0]?.rowFlex || elementList?.[1]?.rowFlex
+        rowFlex: elementList?.[0]?.rowFlex || elementList?.[1]?.rowFlex,
+        // 行垂直对齐方式，如上对齐、居中对齐、下对齐
+        verticalAlign: elementList?.[0]?.verticalAlign || elementList?.[1]?.verticalAlign
       })
     }
     // 起始位置及页码计算
@@ -2028,6 +2034,7 @@ export class Draw {
           ascent,
           rowIndex: curRow.rowIndex + 1,
           rowFlex: elementList[i]?.rowFlex || elementList[i + 1]?.rowFlex,
+          verticalAlign: elementList[i]?.verticalAlign || elementList[i + 1]?.verticalAlign,
           isPageBreak: element.type === ElementType.PAGE_BREAK
         }
         // 控件缩进
@@ -2284,6 +2291,8 @@ export class Draw {
   }
 
   public drawRow(ctx: CanvasRenderingContext2D, payload: IDrawRowPayload) {
+    // this.referenceLineParticle.render(ctx, payload)
+
     // 优先绘制高亮元素
     this._drawHighlight(ctx, payload)
     // 绘制元素、下划线、删除线、选区

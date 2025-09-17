@@ -15,7 +15,7 @@ export const EDITOR_ELEMENT_STYLE_ATTR: Array<keyof IElement> = [
   'textDecoration'
 ]
 
-export const EDITOR_ROW_ATTR: Array<keyof IElement> = ['rowFlex', 'rowMargin']
+export const EDITOR_ROW_ATTR: Array<keyof IElement> = ['rowFlex', 'rowMargin', 'verticalAlign']
 
 export const EDITOR_ELEMENT_COPY_ATTR: Array<keyof IElement> = [
   'type',
@@ -28,6 +28,7 @@ export const EDITOR_ELEMENT_COPY_ATTR: Array<keyof IElement> = [
   'underline',
   'strikeout',
   'rowFlex',
+  'verticalAlign',
   'url',
   'areaId',
   'hyperlinkId',
@@ -49,6 +50,7 @@ export const EDITOR_ELEMENT_ZIP_ATTR: Array<keyof IElement> = [
   'underline',
   'strikeout',
   'rowFlex',
+  'verticalAlign',
   'rowMargin',
   'dashArray',
   'trList',

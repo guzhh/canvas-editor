@@ -20,7 +20,7 @@ import Editor, {
   RowFlex,
   TextDecorationStyle,
   TitleLevel,
-  splitText, DataImageType
+  splitText, DataImageType, VerticalAlign
 } from './editor'
 import { Dialog } from './components/dialog/Dialog'
 import { formatPrismToken } from './utils/prism'
@@ -37,27 +37,27 @@ window.onload = function() {
     container,
     {
       header: [
-        {
-          value: '第一人民医院',
-          size: 32,
-          rowFlex: RowFlex.CENTER
-        },
-        {
-          value: '\n门诊病历',
-          size: 18,
-          rowFlex: RowFlex.CENTER
-        },
-        {
-          value: '\n',
-          type: ElementType.SEPARATOR
-        }
+        // {
+        //   value: '第一人民医院',
+        //   size: 32,
+        //   rowFlex: RowFlex.CENTER
+        // },
+        // {
+        //   value: '\n门诊病历',
+        //   size: 18,
+        //   rowFlex: RowFlex.CENTER
+        // },
+        // {
+        //   value: '\n',
+        //   type: ElementType.SEPARATOR
+        // }
       ],
       main: <IElement[]>data,
       footer: [
-        {
-          value: 'canvas-editor',
-          size: 12
-        }
+        // {
+        //   value: 'canvas-editor',
+        //   size: 12
+        // }
       ]
     },
     options
@@ -321,6 +321,31 @@ window.onload = function() {
   justifyDom.onclick = function() {
     console.log('justify')
     instance.command.executeRowFlex(RowFlex.JUSTIFY)
+  }
+
+  const verticallyTopDom = document.querySelector<HTMLDivElement>(
+    '.menu-item__vertically-top'
+  )!
+  verticallyTopDom.title = `行顶部对齐`
+  verticallyTopDom.onclick = function() {
+    console.log('vertically-top')
+    instance.command.executeRowVerticalAlign(VerticalAlign.TOP)
+  }
+  const verticallyCenteredDom = document.querySelector<HTMLDivElement>(
+    '.menu-item__vertically-centered'
+  )!
+  verticallyCenteredDom.title = `行垂直居中`
+  verticallyCenteredDom.onclick = function() {
+    console.log('vertically-centered')
+    instance.command.executeRowVerticalAlign(VerticalAlign.MIDDLE)
+  }
+  const verticallyBottomDom = document.querySelector<HTMLDivElement>(
+    '.menu-item__vertically-bottom'
+  )!
+  verticallyBottomDom.title = `行底部对齐`
+  verticallyBottomDom.onclick = function() {
+    console.log('vertically-bottom')
+    instance.command.executeRowVerticalAlign(VerticalAlign.BOTTOM)
   }
 
   const rowMarginDom = document.querySelector<HTMLDivElement>(

@@ -10,6 +10,7 @@ import { IRow, IRowElement } from '../../../interface/Row'
 import { getUUID } from '../../../utils'
 import { RangeManager } from '../../range/RangeManager'
 import { Draw } from '../Draw'
+import { VerticalAlign } from '../../../dataset/enum/VerticalAlign'
 
 export class ListParticle {
   private draw: Draw
@@ -205,7 +206,13 @@ export class ListParticle {
       }
     } = position
     const x = startX - offsetX! + tabWidth
-    const y = startY + ascent
+    let y = startY + ascent
+    // TODO 处理列表项的行垂直方向的对齐方式
+    if (row.verticalAlign === VerticalAlign.TOP){
+      y = y - ascent + startElement.metrics.height
+    }else if (row.verticalAlign === VerticalAlign.MIDDLE){
+      y = y - (ascent - startElement.metrics.height) / 2
+    }
     // 复选框样式特殊处理
     if (startElement.listStyle === ListStyle.CHECKBOX) {
       const { width, height, gap } = this.options.checkbox

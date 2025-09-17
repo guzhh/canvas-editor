@@ -534,6 +534,7 @@ export class RangeManager {
     const color = curElement.color || null
     const highlight = curElement.highlight || null
     const rowFlex = curElement.rowFlex || null
+    const verticalAlign = curElement.verticalAlign || null
     const rowMargin = curElement.rowMargin ?? this.options.defaultRowMargin
     const dashArray = curElement.dashArray || []
     const level = curElement.level || null
@@ -562,6 +563,7 @@ export class RangeManager {
       color,
       highlight,
       rowFlex,
+      verticalAlign,
       rowMargin,
       dashArray,
       level,
@@ -604,6 +606,7 @@ export class RangeManager {
       color: null,
       highlight: null,
       rowFlex: null,
+      verticalAlign: null,
       rowMargin,
       dashArray: [],
       level: null,

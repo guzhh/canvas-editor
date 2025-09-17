@@ -927,6 +927,23 @@ export class CommandAdapt {
     this.draw.render({ curIndex, isSetCursor })
   }
 
+  // 设置行垂直方向的对齐方式
+  public rowVerticalAlign(payload: VerticalAlign) {
+    const isReadonly = this.draw.isReadonly()
+    if (isReadonly) return
+    const { startIndex, endIndex } = this.range.getRange()
+    if (!~startIndex && !~endIndex) return
+    const rowElementList = this.range.getRangeRowElementList()
+    if (!rowElementList) return
+    rowElementList.forEach(element => {
+      element.verticalAlign = payload
+    })
+    // 光标定位
+    const isSetCursor = startIndex === endIndex
+    const curIndex = isSetCursor ? endIndex : startIndex
+    this.draw.render({ curIndex, isSetCursor })
+  }
+
   public rowMargin(payload: number) {
     const isReadonly = this.draw.isReadonly()
     if (isReadonly) return
@@ -1773,6 +1790,7 @@ export class CommandAdapt {
       elementList: IElement[]
       index: number
     }[] = []
+
     function getElementInfoById(elementList: IElement[]) {
       let i = 0
       while (i < elementList.length) {
@@ -1799,6 +1817,7 @@ export class CommandAdapt {
         }
       }
     }
+
     // 优先正文再页眉页脚
     const data = [
       this.draw.getOriginalMainElementList(),
@@ -1842,6 +1861,7 @@ export class CommandAdapt {
     const { id, conceptId } = payload
     if (!id && !conceptId) return
     let isExistDelete = false
+
     function deleteElement(elementList: IElement[]) {
       let i = 0
       while (i < elementList.length) {
@@ -1867,6 +1887,7 @@ export class CommandAdapt {
         i++
       }
     }
+
     // 优先正文再页眉页脚
     const data = [
       this.draw.getOriginalMainElementList(),
@@ -1929,7 +1950,7 @@ export class CommandAdapt {
   }
 
   // 获取全部DataImage 元素
-  public getDataImageList(): IElement[]{
+  public getDataImageList(): IElement[] {
     const result: IElement[] = []
     const getDataImage = (elementList: IElement[]) => {
       let i = 0
@@ -1946,7 +1967,7 @@ export class CommandAdapt {
             }
           }
         }
-        if (element.type === ElementType.DATA_IMAGE){
+        if (element.type === ElementType.DATA_IMAGE) {
           result.push(element)
         }
       }
@@ -2166,8 +2187,8 @@ export class CommandAdapt {
     const getElementList = (htmlText?: string) =>
       htmlText !== undefined
         ? getElementListByHTML(htmlText, {
-            innerWidth
-          })
+          innerWidth
+        })
         : undefined
     this.setValue({
       header: getElementList(header),
@@ -2311,7 +2332,7 @@ export class CommandAdapt {
             !(
               element.controlComponent === ControlComponent.POSTFIX &&
               elementList[i + 1]?.controlComponent !==
-                ControlComponent.POST_TEXT
+              ControlComponent.POST_TEXT
             )
           ) {
             continue
@@ -2353,6 +2374,7 @@ export class CommandAdapt {
       }
       return null
     }
+
     const data = [
       {
         zone: EditorZone.HEADER,
@@ -2403,6 +2425,7 @@ export class CommandAdapt {
     // 插入控件
     this.draw.insertElementList([cloneElement])
   }
+
   public getContainer(): HTMLDivElement {
     return this.draw.getContainer()
   }
@@ -2438,7 +2461,7 @@ export class CommandAdapt {
           if (
             nextElement.level &&
             titleOrderNumberMapping[nextElement.level] <=
-              titleOrderNumberMapping[element.level!]
+            titleOrderNumberMapping[element.level!]
           ) {
             break
           }

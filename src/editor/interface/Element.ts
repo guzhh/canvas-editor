@@ -1,3 +1,4 @@
+import { VerticalAlign } from './../dataset/enum/VerticalAlign'
 import { ImageDisplay } from '../dataset/enum/Common'
 import { ControlComponent } from '../dataset/enum/Control'
 import { ElementType } from '../dataset/enum/Element'
@@ -37,6 +38,7 @@ export interface IElementStyle {
   strikeout?: boolean
   rowFlex?: RowFlex
   rowMargin?: number
+  verticalAlign?: VerticalAlign // 垂直方向对齐方式
   letterSpacing?: number
   textDecoration?: ITextDecoration
 }
